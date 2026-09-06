@@ -1,26 +1,15 @@
 // webrtc.js
-// ============================================================
-// LIVE CLASS WEBRTC ENGINE
-// Firebase Firestore Signaling
-// ============================================================
 
 import {
     auth,
     db,
+    collection,
     doc,
     setDoc,
     deleteDoc,
-    collection,
-    addDoc,
     onSnapshot,
-    query,
     serverTimestamp
 } from "./firebase.js";
-
-
-// ============================================================
-// CONFIG
-// ============================================================
 
 const RTC_CONFIG = {
     iceServers: [
@@ -33,136 +22,62 @@ const RTC_CONFIG = {
     ]
 };
 
-
-// ============================================================
-// GLOBAL STATE
-// ============================================================
-
 let localStream = null;
+let cameraStream = null;
+let screenStream = null;
+
 let localVideoElement = null;
+let remoteContainer = null;
 
 let currentRoomId = null;
 let currentUserId = null;
+
 let isTeacher = false;
-
-let remoteContainer = null;
-
 let joined = false;
+
 let cameraFacingMode = "user";
 
 let cameraTrack = null;
 let audioTrack = null;
 
-let screenStream = null;
 let isScreenSharing = false;
 
 const peerConnections = new Map();
 const remoteVideos = new Map();
-
 const processedSignals = new Set();
 
 let unsubscribeSignals = null;
 let unsubscribeParticipants = null;
+let unsubscribeBlock = null;
 
 
-// ============================================================
-// HELPERS
-// ============================================================
-
-function getCurrentUser() {
-    return auth.currentUser;
-}
-
-
-function requireUser() {
-    const user = getCurrentUser();
-
-    if (!user) {
-        throw new Error("User is not logged in.");
-    }
-
-    return user;
-}
-
-
-function getUserId() {
-    return requireUser().uid;
-}
-
-
-function createRemoteVideo(userId) {
-
-    const video = document.createElement("video");
-
-    video.autoplay = true;
-    video.playsInline = true;
-    video.controls = false;
-
-    video.dataset.userId = userId;
-
-    video.style.width = "100%";
-    video.style.height = "100%";
-    video.style.objectFit = "cover";
-    video.style.borderRadius = "18px";
-
-    if (remoteContainer) {
-        remoteContainer.appendChild(video);
-    }
-
-    remoteVideos.set(userId, video);
-
-    return video;
-}
-
-
-function removeRemoteVideo(userId) {
-
-    const video = remoteVideos.get(userId);
-
-    if (video) {
-        try {
-            video.pause();
-        } catch {}
-
-        video.srcObject = null;
-        video.remove();
-    }
-
-    remoteVideos.delete(userId);
-}
-
-
-function getPeerConnection(userId) {
-    return peerConnections.get(userId);
-}
-
-
-// ============================================================
-// CAMERA
-// ============================================================
+/* =========================================================
+   CAMERA
+========================================================= */
 
 export async function startCamera(videoElement) {
 
-    if (!videoElement) {
-        throw new Error("Local video element not found.");
+    if (!auth.currentUser) {
+        throw new Error("User is not logged in");
     }
 
-    localVideoElement = videoElement;
+    localVideoElement = videoElement || localVideoElement;
 
-    // Already running
-    if (localStream) {
+    if (cameraStream) {
+        if (localVideoElement) {
+            localVideoElement.srcObject = cameraStream;
+            localVideoElement.muted = true;
+            localVideoElement.playsInline = true;
 
-        localVideoElement.srcObject = localStream;
+            try {
+                await localVideoElement.play();
+            } catch (e) {}
+        }
 
-        try {
-            await localVideoElement.play();
-        } catch {}
-
-        return localStream;
+        return cameraStream;
     }
 
-
-    const stream = await navigator.mediaDevices.getUserMedia({
+    cameraStream = await navigator.mediaDevices.getUserMedia({
         video: {
             facingMode: cameraFacingMode,
             width: {
@@ -170,9 +85,6 @@ export async function startCamera(videoElement) {
             },
             height: {
                 ideal: 720
-            },
-            frameRate: {
-                ideal: 30
             }
         },
         audio: {
@@ -182,38 +94,39 @@ export async function startCamera(videoElement) {
         }
     });
 
+    cameraTrack = cameraStream.getVideoTracks()[0];
+    audioTrack = cameraStream.getAudioTracks()[0];
 
-    localStream = stream;
+    localStream = cameraStream;
 
-    cameraTrack = stream.getVideoTracks()[0];
-    audioTrack = stream.getAudioTracks()[0];
+    if (localVideoElement) {
 
+        localVideoElement.srcObject = cameraStream;
+        localVideoElement.muted = true;
+        localVideoElement.playsInline = true;
 
-    localVideoElement.srcObject = localStream;
+        try {
+            await localVideoElement.play();
+        } catch (e) {}
+    }
 
-    try {
-        await localVideoElement.play();
-    } catch {}
-
-
-    return localStream;
+    return cameraStream;
 }
 
 
-// ============================================================
-// STOP CAMERA
-// ============================================================
+/* =========================================================
+   STOP CAMERA
+========================================================= */
 
 export function stopCamera() {
 
-    if (!localStream) return;
+    if (!cameraStream) return;
 
-    localStream.getTracks().forEach(track => {
-        try {
-            track.stop();
-        } catch {}
+    cameraStream.getTracks().forEach(track => {
+        track.stop();
     });
 
+    cameraStream = null;
     localStream = null;
     cameraTrack = null;
     audioTrack = null;
@@ -224,51 +137,29 @@ export function stopCamera() {
 }
 
 
-// ============================================================
-// SWITCH FRONT / BACK CAMERA
-// ============================================================
+/* =========================================================
+   FRONT / BACK CAMERA
+========================================================= */
 
 export async function switchCamera() {
 
-    if (!localStream) {
-        throw new Error("Camera is not started.");
+    if (!cameraStream) {
+        throw new Error("Camera is not running");
     }
 
+    if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Camera API unavailable");
+    }
 
-    const newFacingMode =
+    cameraFacingMode =
         cameraFacingMode === "user"
             ? "environment"
             : "user";
 
-
-    let newStream;
-
-    try {
-
-        newStream = await navigator.mediaDevices.getUserMedia({
+    const newStream =
+        await navigator.mediaDevices.getUserMedia({
             video: {
-                facingMode: {
-                    exact: newFacingMode
-                },
-                width: {
-                    ideal: 1280
-                },
-                height: {
-                    ideal: 720
-                },
-                frameRate: {
-                    ideal: 30
-                }
-            },
-            audio: false
-        });
-
-    } catch {
-
-        // Some devices don't support exact facingMode
-        newStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: newFacingMode,
+                facingMode: cameraFacingMode,
                 width: {
                     ideal: 1280
                 },
@@ -278,426 +169,295 @@ export async function switchCamera() {
             },
             audio: false
         });
-    }
 
-
-    const newVideoTrack = newStream.getVideoTracks()[0];
+    const newVideoTrack =
+        newStream.getVideoTracks()[0];
 
     const oldVideoTrack = cameraTrack;
 
-
-    cameraFacingMode = newFacingMode;
     cameraTrack = newVideoTrack;
 
+    if (cameraStream) {
 
-    // Replace video track in every PeerConnection
+        cameraStream.removeTrack(oldVideoTrack);
+        cameraStream.addTrack(newVideoTrack);
+
+        oldVideoTrack.stop();
+    }
+
+    localStream = cameraStream;
+
+    if (localVideoElement) {
+        localVideoElement.srcObject = cameraStream;
+
+        try {
+            await localVideoElement.play();
+        } catch (e) {}
+    }
+
+    /* Replace video track in every peer connection */
+
     for (const pc of peerConnections.values()) {
 
-        const sender = pc
-            .getSenders()
-            .find(s =>
-                s.track &&
-                s.track.kind === "video"
+        const sender =
+            pc.getSenders().find(
+                s =>
+                    s.track &&
+                    s.track.kind === "video"
             );
 
         if (sender) {
-
             try {
                 await sender.replaceTrack(newVideoTrack);
             } catch (error) {
-                console.warn(
-                    "Unable to replace camera track:",
+                console.error(
+                    "Camera replace failed:",
                     error
                 );
             }
         }
     }
 
-
-    // Replace local stream track
-    if (localStream) {
-
-        localStream.removeTrack(oldVideoTrack);
-        localStream.addTrack(newVideoTrack);
-    }
-
-
-    if (localVideoElement) {
-
-        localVideoElement.srcObject = localStream;
-
-        try {
-            await localVideoElement.play();
-        } catch {}
-    }
-
-
-    if (oldVideoTrack) {
-        try {
-            oldVideoTrack.stop();
-        } catch {}
-    }
-
+    await updateParticipantStatus({
+        camera: true
+    });
 
     return cameraFacingMode;
 }
 
 
-// ============================================================
-// MUTE / UNMUTE MICROPHONE
-// ============================================================
+/* =========================================================
+   MUTE
+========================================================= */
 
-export function toggleMute() {
-
-    if (!audioTrack && localStream) {
-        audioTrack = localStream.getAudioTracks()[0];
-    }
+export async function toggleMute() {
 
     if (!audioTrack) {
         return false;
     }
 
+    audioTrack.enabled =
+        !audioTrack.enabled;
 
-    audioTrack.enabled = !audioTrack.enabled;
+    await updateParticipantStatus({
+        mic: audioTrack.enabled
+    });
 
-    return !audioTrack.enabled;
+    return audioTrack.enabled;
 }
 
 
-// ============================================================
-// CAMERA ON / OFF
-// ============================================================
+/* =========================================================
+   CAMERA ON / OFF
+========================================================= */
 
-export function toggleCamera() {
-
-    if (!cameraTrack && localStream) {
-        cameraTrack = localStream.getVideoTracks()[0];
-    }
+export async function toggleCamera() {
 
     if (!cameraTrack) {
         return false;
     }
 
+    cameraTrack.enabled =
+        !cameraTrack.enabled;
 
-    cameraTrack.enabled = !cameraTrack.enabled;
+    await updateParticipantStatus({
+        camera: cameraTrack.enabled
+    });
 
-    return !cameraTrack.enabled;
+    return cameraTrack.enabled;
 }
 
 
-// ============================================================
-// SCREEN SHARE
-// ============================================================
+/* =========================================================
+   SCREEN SHARE
+========================================================= */
 
 export async function startScreenShare() {
 
-    if (isScreenSharing) {
-        return screenStream;
-    }
-
-
-    if (!navigator.mediaDevices.getDisplayMedia) {
+    if (!isTeacher) {
         throw new Error(
-            "Screen sharing is not supported on this browser."
+            "Only teacher can share screen"
         );
     }
 
-
-    screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-            frameRate: {
-                ideal: 30
-            }
-        },
-        audio: true
-    });
-
-
-    const screenTrack = screenStream.getVideoTracks()[0];
-
-    if (!screenTrack) {
-        throw new Error("Screen track unavailable.");
-    }
-
-
-    // Replace outgoing video track
-    for (const pc of peerConnections.values()) {
-
-        const sender = pc
-            .getSenders()
-            .find(s =>
-                s.track &&
-                s.track.kind === "video"
-            );
-
-        if (sender) {
-
-            try {
-                await sender.replaceTrack(screenTrack);
-            } catch (error) {
-                console.warn(
-                    "Screen share replaceTrack failed:",
-                    error
-                );
-            }
-        }
-    }
-
-
-    isScreenSharing = true;
-
-
-    // When browser's "Stop sharing" button is pressed
-    screenTrack.onended = async () => {
-
-        try {
-            await stopScreenShare();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-
-    return screenStream;
-}
-
-
-// ============================================================
-// STOP SCREEN SHARE
-// ============================================================
-
-export async function stopScreenShare() {
-
-    if (!screenStream) {
+    if (isScreenSharing) {
         return;
     }
 
+    screenStream =
+        await navigator.mediaDevices.getDisplayMedia({
+            video: {
+                cursor: "always"
+            },
+            audio: false
+        });
 
-    const screenTrack = screenStream.getVideoTracks()[0];
+    const screenTrack =
+        screenStream.getVideoTracks()[0];
 
-    // Restore camera
+    for (const pc of peerConnections.values()) {
+
+        const sender =
+            pc.getSenders().find(
+                s =>
+                    s.track &&
+                    s.track.kind === "video"
+            );
+
+        if (sender) {
+            await sender.replaceTrack(screenTrack);
+        }
+    }
+
+    isScreenSharing = true;
+
+    screenTrack.onended = async () => {
+
+        if (isScreenSharing) {
+            await stopScreenShare();
+        }
+    };
+}
+
+
+export async function stopScreenShare() {
+
+    if (!isScreenSharing) {
+        return;
+    }
+
     if (cameraTrack) {
 
         for (const pc of peerConnections.values()) {
 
-            const sender = pc
-                .getSenders()
-                .find(s =>
-                    s.track &&
-                    s.track.kind === "video"
+            const sender =
+                pc.getSenders().find(
+                    s =>
+                        s.track &&
+                        s.track.kind === "video"
                 );
 
             if (sender) {
-
                 try {
-                    await sender.replaceTrack(cameraTrack);
-                } catch (error) {
-                    console.warn(
-                        "Camera restore failed:",
-                        error
+                    await sender.replaceTrack(
+                        cameraTrack
                     );
+                } catch (error) {
+                    console.error(error);
                 }
             }
         }
     }
 
+    if (screenStream) {
 
-    screenStream.getTracks().forEach(track => {
+        screenStream
+            .getTracks()
+            .forEach(track => track.stop());
 
-        try {
-            track.stop();
-        } catch {}
-
-    });
-
-
-    screenStream = null;
-    isScreenSharing = false;
-
-
-    if (localVideoElement && localStream) {
-
-        localVideoElement.srcObject = localStream;
-
-        try {
-            await localVideoElement.play();
-        } catch {}
+        screenStream = null;
     }
+
+    isScreenSharing = false;
 }
 
 
-// ============================================================
-// CREATE PEER CONNECTION
-// ============================================================
+/* =========================================================
+   CREATE PEER CONNECTION
+========================================================= */
 
-async function createPeerConnection(remoteUserId) {
+function createPeerConnection(remoteUserId) {
 
     if (peerConnections.has(remoteUserId)) {
         return peerConnections.get(remoteUserId);
     }
 
-
-    const pc = new RTCPeerConnection(RTC_CONFIG);
-
+    const pc =
+        new RTCPeerConnection(
+            RTC_CONFIG
+        );
 
     peerConnections.set(
         remoteUserId,
         pc
     );
 
+    /* Teacher sends camera/mic */
 
-    // --------------------------------------------------------
-    // Add local tracks
-    // --------------------------------------------------------
+    if (isTeacher && cameraStream) {
 
-    if (localStream) {
+        cameraStream
+            .getTracks()
+            .forEach(track => {
 
-        localStream.getTracks().forEach(track => {
-
-            try {
                 pc.addTrack(
                     track,
-                    localStream
+                    cameraStream
                 );
-            } catch (error) {
-                console.warn(
-                    "Unable to add local track:",
-                    error
-                );
-            }
 
-        });
+            });
     }
 
 
-    // --------------------------------------------------------
-    // Receive remote tracks
-    // --------------------------------------------------------
+    /* Remote video */
 
     pc.ontrack = event => {
 
-        let video = remoteVideos.get(remoteUserId);
+        const stream =
+            event.streams[0];
 
-        if (!video) {
-            video = createRemoteVideo(remoteUserId);
-        }
+        if (!stream) return;
 
-
-        if (event.streams && event.streams[0]) {
-
-            video.srcObject = event.streams[0];
-
-        } else {
-
-            let stream = video.srcObject;
-
-            if (!stream) {
-                stream = new MediaStream();
-                video.srcObject = stream;
-            }
-
-            stream.addTrack(event.track);
-        }
-
-
-        video.play().catch(() => {});
+        createRemoteVideo(
+            remoteUserId,
+            stream
+        );
     };
 
 
-    // --------------------------------------------------------
-    // ICE candidate
-    // --------------------------------------------------------
+    /* ICE */
 
     pc.onicecandidate = async event => {
 
-        if (!event.candidate) {
-            return;
-        }
+        if (!event.candidate) return;
 
-
-        try {
-
-            const signalsRef = collection(
-                db,
-                "liveClasses",
-                currentRoomId,
-                "signals"
-            );
-
-
-            await addDoc(signalsRef, {
-
-                type: "candidate",
-
-                from: currentUserId,
-
-                to: remoteUserId,
-
-                candidate:
-                    event.candidate.toJSON(),
-
-                createdAt:
-                    serverTimestamp()
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "ICE candidate error:",
-                error
-            );
-        }
+        await sendSignal({
+            type: "candidate",
+            to: remoteUserId,
+            candidate:
+                event.candidate.toJSON()
+        });
     };
 
 
-    // --------------------------------------------------------
-    // Connection state
-    // --------------------------------------------------------
-
     pc.onconnectionstatechange = () => {
 
-        const state = pc.connectionState;
+        const state =
+            pc.connectionState;
 
         console.log(
-            `Connection ${remoteUserId}:`,
+            "Connection:",
+            remoteUserId,
             state
         );
 
-
-        if (state === "failed") {
-
-            console.warn(
-                "Peer connection failed:",
-                remoteUserId
-            );
-
-            try {
-                pc.restartIce();
-            } catch {}
-        }
-
-
-        if (state === "closed") {
-
-            removeRemoteVideo(
-                remoteUserId
-            );
-
-            peerConnections.delete(
-                remoteUserId
-            );
+        if (
+            state === "failed" ||
+            state === "closed"
+        ) {
+            removePeer(remoteUserId);
         }
     };
 
 
     pc.oniceconnectionstatechange = () => {
 
-        console.log(
-            `ICE ${remoteUserId}:`,
-            pc.iceConnectionState
-        );
-
+        if (
+            pc.iceConnectionState ===
+                "failed"
+        ) {
+            pc.restartIce();
+        }
     };
 
 
@@ -705,24 +465,140 @@ async function createPeerConnection(remoteUserId) {
 }
 
 
-// ============================================================
-// SEND SIGNAL
-// ============================================================
+/* =========================================================
+   REMOTE VIDEO
+========================================================= */
+
+function createRemoteVideo(
+    userId,
+    stream
+) {
+
+    if (!remoteContainer) {
+        return;
+    }
+
+    let wrapper =
+        document.getElementById(
+            `remote-${userId}`
+        );
+
+    if (!wrapper) {
+
+        wrapper =
+            document.createElement("div");
+
+        wrapper.id =
+            `remote-${userId}`;
+
+        wrapper.className =
+            "remote-video-wrapper";
+
+        const video =
+            document.createElement("video");
+
+        video.autoplay = true;
+        video.playsInline = true;
+        video.controls = false;
+
+        video.className =
+            "remote-video";
+
+        const label =
+            document.createElement("div");
+
+        label.className =
+            "remote-user-label";
+
+        label.textContent =
+            "Student";
+
+        wrapper.appendChild(video);
+        wrapper.appendChild(label);
+
+        remoteContainer.appendChild(
+            wrapper
+        );
+
+        remoteVideos.set(
+            userId,
+            video
+        );
+    }
+
+    const video =
+        remoteVideos.get(userId);
+
+    if (video) {
+        video.srcObject = stream;
+
+        video.play().catch(() => {});
+    }
+}
+
+
+/* =========================================================
+   REMOVE PEER
+========================================================= */
+
+function removePeer(userId) {
+
+    const pc =
+        peerConnections.get(userId);
+
+    if (pc) {
+
+        try {
+            pc.close();
+        } catch (e) {}
+
+        peerConnections.delete(userId);
+    }
+
+    const video =
+        remoteVideos.get(userId);
+
+    if (video) {
+
+        try {
+            video.srcObject = null;
+        } catch (e) {}
+
+        remoteVideos.delete(userId);
+    }
+
+    const wrapper =
+        document.getElementById(
+            `remote-${userId}`
+        );
+
+    if (wrapper) {
+        wrapper.remove();
+    }
+}
+
+
+/* =========================================================
+   SIGNAL
+========================================================= */
 
 async function sendSignal(data) {
 
-    const signalsRef = collection(
-        db,
-        "liveClasses",
-        currentRoomId,
-        "signals"
-    );
+    if (!currentRoomId) return;
+    if (!currentUserId) return;
 
-
-    await addDoc(
-        signalsRef,
+    await setDoc(
+        doc(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "signals",
+            crypto.randomUUID()
+        ),
         {
             ...data,
+
+            from: currentUserId,
 
             createdAt:
                 serverTimestamp()
@@ -731,66 +607,51 @@ async function sendSignal(data) {
 }
 
 
-// ============================================================
-// TEACHER CREATE OFFER
-// ============================================================
+/* =========================================================
+   CREATE OFFER
+========================================================= */
 
-async function createOfferForStudent(studentId) {
+async function createOfferForStudent(
+    studentId
+) {
 
-    try {
+    if (!isTeacher) return;
 
-        const pc =
-            await createPeerConnection(studentId);
-
-
-        const offer =
-            await pc.createOffer();
-
-
-        await pc.setLocalDescription(
-            offer
+    const pc =
+        createPeerConnection(
+            studentId
         );
 
+    const offer =
+        await pc.createOffer();
 
-        await sendSignal({
+    await pc.setLocalDescription(
+        offer
+    );
 
-            type: "offer",
-
-            from: currentUserId,
-
-            to: studentId,
-
-            sdp: {
-                type: offer.type,
-                sdp: offer.sdp
-            }
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "Offer creation failed:",
-            error
-        );
-    }
+    await sendSignal({
+        type: "offer",
+        to: studentId,
+        sdp: {
+            type: offer.type,
+            sdp: offer.sdp
+        }
+    });
 }
 
 
-// ============================================================
-// HANDLE OFFER
-// ============================================================
+/* =========================================================
+   HANDLE OFFER
+========================================================= */
 
-async function handleOffer(signal) {
-
-    const fromUserId = signal.from;
-
+async function handleOffer(
+    signal
+) {
 
     const pc =
-        await createPeerConnection(
-            fromUserId
+        createPeerConnection(
+            signal.from
         );
-
 
     await pc.setRemoteDescription(
         new RTCSessionDescription(
@@ -798,84 +659,61 @@ async function handleOffer(signal) {
         )
     );
 
-
     const answer =
         await pc.createAnswer();
-
 
     await pc.setLocalDescription(
         answer
     );
 
-
     await sendSignal({
-
         type: "answer",
-
-        from: currentUserId,
-
-        to: fromUserId,
-
+        to: signal.from,
         sdp: {
             type: answer.type,
             sdp: answer.sdp
         }
-
     });
 }
 
 
-// ============================================================
-// HANDLE ANSWER
-// ============================================================
+/* =========================================================
+   HANDLE ANSWER
+========================================================= */
 
-async function handleAnswer(signal) {
+async function handleAnswer(
+    signal
+) {
 
     const pc =
         peerConnections.get(
             signal.from
         );
 
+    if (!pc) return;
 
-    if (!pc) {
-        return;
-    }
-
-
-    try {
-
-        await pc.setRemoteDescription(
-            new RTCSessionDescription(
-                signal.sdp
-            )
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Answer handling failed:",
-            error
-        );
-    }
+    await pc.setRemoteDescription(
+        new RTCSessionDescription(
+            signal.sdp
+        )
+    );
 }
 
 
-// ============================================================
-// HANDLE ICE CANDIDATE
-// ============================================================
+/* =========================================================
+   HANDLE ICE
+========================================================= */
 
-async function handleCandidate(signal) {
+async function handleCandidate(
+    signal
+) {
 
     const pc =
         peerConnections.get(
             signal.from
         );
 
-
-    if (!pc) {
-        return;
-    }
-
+    if (!pc) return;
 
     try {
 
@@ -895,49 +733,66 @@ async function handleCandidate(signal) {
 }
 
 
-// ============================================================
-// SIGNALING LISTENER
-// ============================================================
+/* =========================================================
+   SIGNAL LISTENER
+========================================================= */
 
 function listenForSignals() {
 
     if (unsubscribeSignals) {
         unsubscribeSignals();
-        unsubscribeSignals = null;
     }
 
-
-    const signalsRef = collection(
-        db,
-        "liveClasses",
-        currentRoomId,
-        "signals"
-    );
-
+    const signalsRef =
+        collection(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "signals"
+        );
 
     unsubscribeSignals =
         onSnapshot(
             signalsRef,
             async snapshot => {
 
-                for (const change of snapshot.docChanges()) {
+                for (
+                    const change
+                    of snapshot.docChanges()
+                ) {
 
                     if (
-                        change.type !== "added"
+                        change.type !==
+                        "added"
                     ) {
                         continue;
                     }
 
-
-                    const signalDoc =
-                        change.doc;
-
-
                     const signal =
-                        signalDoc.data();
+                        change.doc.data();
 
+                    const signalId =
+                        change.doc.id;
 
-                    // Ignore own signals
+                    if (
+                        processedSignals.has(
+                            signalId
+                        )
+                    ) {
+                        continue;
+                    }
+
+                    processedSignals.add(
+                        signalId
+                    );
+
+                    if (
+                        signal.to !==
+                        currentUserId
+                    ) {
+                        continue;
+                    }
+
                     if (
                         signal.from ===
                         currentUserId
@@ -945,122 +800,82 @@ function listenForSignals() {
                         continue;
                     }
 
-
-                    // Ignore signals not meant for us
-                    if (
-                        signal.to &&
-                        signal.to !==
-                        currentUserId
-                    ) {
-                        continue;
-                    }
-
-
-                    // Avoid processing twice
-                    if (
-                        processedSignals.has(
-                            signalDoc.id
-                        )
-                    ) {
-                        continue;
-                    }
-
-
-                    processedSignals.add(
-                        signalDoc.id
-                    );
-
-
                     try {
 
-                        switch (signal.type) {
+                        if (
+                            signal.type ===
+                            "offer"
+                        ) {
 
-                            case "offer":
+                            await handleOffer(
+                                signal
+                            );
 
-                                if (!isTeacher) {
+                        }
 
-                                    await handleOffer(
-                                        signal
-                                    );
+                        else if (
+                            signal.type ===
+                            "answer"
+                        ) {
 
-                                }
+                            await handleAnswer(
+                                signal
+                            );
 
-                                break;
+                        }
 
+                        else if (
+                            signal.type ===
+                            "candidate"
+                        ) {
 
-                            case "answer":
-
-                                if (isTeacher) {
-
-                                    await handleAnswer(
-                                        signal
-                                    );
-
-                                }
-
-                                break;
-
-
-                            case "candidate":
-
-                                await handleCandidate(
-                                    signal
-                                );
-
-                                break;
+                            await handleCandidate(
+                                signal
+                            );
                         }
 
                     } catch (error) {
 
                         console.error(
-                            "Signal processing error:",
+                            "Signal error:",
                             error
                         );
                     }
                 }
-
-            },
-            error => {
-
-                console.error(
-                    "Signal listener error:",
-                    error
-                );
-
             }
         );
 }
 
 
-// ============================================================
-// PARTICIPANT REGISTRATION
-// ============================================================
+/* =========================================================
+   PARTICIPANT REGISTER
+========================================================= */
 
 async function registerParticipant() {
 
-    const participantRef = doc(
-        db,
-        "liveClasses",
-        currentRoomId,
-        "participants",
-        currentUserId
-    );
+    if (!currentRoomId) return;
+    if (!currentUserId) return;
 
+    const user =
+        auth.currentUser;
 
     await setDoc(
-        participantRef,
+        doc(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "participants",
+            currentUserId
+        ),
         {
-
-            uid:
-                currentUserId,
+            uid: currentUserId,
 
             name:
-                getCurrentUser().displayName ||
+                user.displayName ||
                 "Student",
 
             photoURL:
-                getCurrentUser().photoURL ||
-                "",
+                user.photoURL || "",
 
             role:
                 isTeacher
@@ -1068,15 +883,46 @@ async function registerParticipant() {
                     : "student",
 
             mic:
-                true,
+                isTeacher
+                    ? true
+                    : false,
 
             camera:
-                true,
+                isTeacher
+                    ? true
+                    : false,
 
             joinedAt:
                 serverTimestamp()
+        }
+    );
+}
 
-        },
+
+/* =========================================================
+   PARTICIPANT STATUS
+========================================================= */
+
+export async function updateParticipantStatus(
+    data
+) {
+
+    if (
+        !currentRoomId ||
+        !currentUserId
+    ) {
+        return;
+    }
+
+    await setDoc(
+        doc(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "participants",
+            currentUserId
+        ),
+        data,
         {
             merge: true
         }
@@ -1084,19 +930,17 @@ async function registerParticipant() {
 }
 
 
-// ============================================================
-// WATCH PARTICIPANTS
-// ============================================================
+/* =========================================================
+   TEACHER WATCH PARTICIPANTS
+========================================================= */
 
 function watchParticipants() {
 
+    if (!isTeacher) return;
+
     if (unsubscribeParticipants) {
-
         unsubscribeParticipants();
-
-        unsubscribeParticipants = null;
     }
-
 
     const participantsRef =
         collection(
@@ -1106,174 +950,164 @@ function watchParticipants() {
             "participants"
         );
 
-
     unsubscribeParticipants =
         onSnapshot(
             participantsRef,
-            snapshot => {
+            async snapshot => {
 
-                if (!isTeacher) {
-                    return;
+                for (
+                    const change
+                    of snapshot.docChanges()
+                ) {
+
+                    const studentId =
+                        change.doc.id;
+
+                    if (
+                        studentId ===
+                        currentUserId
+                    ) {
+                        continue;
+                    }
+
+                    if (
+                        change.type ===
+                        "added"
+                    ) {
+
+                        try {
+
+                            await createOfferForStudent(
+                                studentId
+                            );
+
+                        } catch (error) {
+
+                            console.error(
+                                "Offer failed:",
+                                error
+                            );
+                        }
+                    }
+
+                    if (
+                        change.type ===
+                        "removed"
+                    ) {
+
+                        removePeer(
+                            studentId
+                        );
+                    }
                 }
-
-
-                snapshot.docChanges()
-                    .forEach(change => {
-
-                        const participantId =
-                            change.doc.id;
-
-
-                        if (
-                            participantId ===
-                            currentUserId
-                        ) {
-                            return;
-                        }
-
-
-                        if (
-                            change.type ===
-                            "added"
-                        ) {
-
-                            createOfferForStudent(
-                                participantId
-                            );
-
-                        }
-
-
-                        if (
-                            change.type ===
-                            "removed"
-                        ) {
-
-                            const pc =
-                                peerConnections.get(
-                                    participantId
-                                );
-
-
-                            if (pc) {
-                                pc.close();
-                            }
-
-
-                            peerConnections.delete(
-                                participantId
-                            );
-
-
-                            removeRemoteVideo(
-                                participantId
-                            );
-                        }
-
-                    });
-
-            },
-            error => {
-
-                console.error(
-                    "Participant listener error:",
-                    error
-                );
-
             }
         );
 }
 
 
-// ============================================================
-// JOIN ROOM
-// ============================================================
+/* =========================================================
+   BLOCK LISTENER
+   Student listens to permanent admin block
+========================================================= */
+
+function listenForBlock() {
+
+    if (isTeacher) return;
+
+    if (!currentRoomId) return;
+    if (!currentUserId) return;
+
+    const blockRef =
+        doc(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "blockedUsers",
+            currentUserId
+        );
+
+    unsubscribeBlock =
+        onSnapshot(
+            blockRef,
+            snapshot => {
+
+                if (snapshot.exists()) {
+
+                    console.warn(
+                        "You have been blocked"
+                    );
+
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            "liveUserBlocked",
+                            {
+                                detail:
+                                    snapshot.data()
+                            }
+                        )
+                    );
+
+                    leaveRoom();
+                }
+            }
+        );
+}
+
+
+/* =========================================================
+   JOIN ROOM
+========================================================= */
 
 export async function joinRoom(
     roomId,
     teacher = false,
     container = null,
-    localVideo = null
+    videoElement = null
 ) {
 
-    if (!roomId) {
+    if (!auth.currentUser) {
         throw new Error(
-            "Room ID is required."
+            "Please login first"
         );
     }
 
-
-    if (joined) {
-
-        console.warn(
-            "Already joined a live room."
-        );
-
-        return;
-    }
-
-
-    const user = requireUser();
-
-
-    currentRoomId =
-        roomId;
-
+    currentRoomId = roomId;
     currentUserId =
-        user.uid;
+        auth.currentUser.uid;
 
-    isTeacher =
-        teacher === true;
+    isTeacher = teacher;
 
     remoteContainer =
         container || null;
 
     localVideoElement =
-        localVideo || null;
+        videoElement || null;
 
 
-    // Start camera if a local video element is supplied
-    if (localVideoElement) {
+    /*
+       IMPORTANT:
 
-        try {
+       Teacher:
+       camera + mic ON
 
-            await startCamera(
-                localVideoElement
-            );
+       Student:
+       NO camera
+       NO microphone
+    */
 
-        } catch (error) {
+    if (isTeacher) {
 
-            console.warn(
-                "Camera start failed:",
-                error
-            );
-
-            // Continue in audio-only mode
-            try {
-
-                const audioOnly =
-                    await navigator.mediaDevices
-                        .getUserMedia({
-                            audio: true
-                        });
-
-
-                localStream =
-                    audioOnly;
-
-                audioTrack =
-                    audioOnly.getAudioTracks()[0];
-
-            } catch (audioError) {
-
-                console.error(
-                    "Microphone also unavailable:",
-                    audioError
-                );
-            }
-        }
+        await startCamera(
+            localVideoElement
+        );
     }
 
+
+    /*
+       Register participant.
+       Firestore rules will reject
+       blocked students.
+    */
 
     await registerParticipant();
 
@@ -1283,290 +1117,206 @@ export async function joinRoom(
 
     if (isTeacher) {
         watchParticipants();
+    } else {
+        listenForBlock();
     }
 
 
     joined = true;
 
-
-    console.log(
-        `Joined room ${roomId} as ${
-            isTeacher
-                ? "teacher"
-                : "student"
-        }`
-    );
-
-
     return {
-        roomId,
-        uid: currentUserId,
-        isTeacher
+        roomId: currentRoomId,
+        userId: currentUserId,
+        teacher: isTeacher
     };
 }
 
 
-// ============================================================
-// UPDATE PARTICIPANT STATUS
-// ============================================================
-
-export async function updateParticipantStatus(
-    data = {}
-) {
-
-    if (!currentRoomId || !currentUserId) {
-        return;
-    }
-
-
-    const participantRef =
-        doc(
-            db,
-            "liveClasses",
-            currentRoomId,
-            "participants",
-            currentUserId
-        );
-
-
-    await setDoc(
-        participantRef,
-        data,
-        {
-            merge: true
-        }
-    );
-}
-
-
-// ============================================================
-// GET LOCAL STREAM
-// ============================================================
-
-export function getLocalStream() {
-    return localStream;
-}
-
-
-// ============================================================
-// GET SCREEN SHARE STATE
-// ============================================================
-
-export function getScreenShareState() {
-    return isScreenSharing;
-}
-
-
-// ============================================================
-// GET MICROPHONE STATE
-// ============================================================
-
-export function isMuted() {
-
-    if (!audioTrack) {
-        return false;
-    }
-
-    return !audioTrack.enabled;
-}
-
-
-// ============================================================
-// GET CAMERA STATE
-// ============================================================
-
-export function isCameraOff() {
-
-    if (!cameraTrack) {
-        return false;
-    }
-
-    return !cameraTrack.enabled;
-}
-
-
-// ============================================================
-// LEAVE ROOM
-// ============================================================
+/* =========================================================
+   LEAVE ROOM
+========================================================= */
 
 export async function leaveRoom() {
 
-    if (!currentRoomId || !currentUserId) {
-        return;
-    }
-
-
-    // Stop screen share first
-    try {
-        await stopScreenShare();
-    } catch {}
-
-
-    // Close every peer connection
-    for (
-        const [
-            userId,
-            pc
-        ] of peerConnections
+    if (
+        currentRoomId &&
+        currentUserId
     ) {
 
         try {
-            pc.close();
-        } catch {}
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "liveClasses",
+                    currentRoomId,
+                    "participants",
+                    currentUserId
+                )
+            );
+
+        } catch (error) {
+
+            console.warn(
+                "Participant cleanup failed:",
+                error
+            );
+        }
+    }
 
 
-        removeRemoteVideo(
-            userId
-        );
+    if (unsubscribeSignals) {
+        unsubscribeSignals();
+        unsubscribeSignals = null;
+    }
+
+    if (unsubscribeParticipants) {
+        unsubscribeParticipants();
+        unsubscribeParticipants = null;
+    }
+
+    if (unsubscribeBlock) {
+        unsubscribeBlock();
+        unsubscribeBlock = null;
+    }
+
+
+    for (
+        const userId
+        of peerConnections.keys()
+    ) {
+
+        removePeer(userId);
     }
 
 
     peerConnections.clear();
-
-
-    // Stop local media
-    stopCamera();
-
-
-    // Remove participant
-    try {
-
-        const participantRef =
-            doc(
-                db,
-                "liveClasses",
-                currentRoomId,
-                "participants",
-                currentUserId
-            );
-
-
-        await deleteDoc(
-            participantRef
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Participant cleanup failed:",
-            error
-        );
-    }
-
-
-    // Stop listeners
-    if (unsubscribeSignals) {
-
-        unsubscribeSignals();
-
-        unsubscribeSignals = null;
-    }
-
-
-    if (unsubscribeParticipants) {
-
-        unsubscribeParticipants();
-
-        unsubscribeParticipants = null;
-    }
-
-
+    remoteVideos.clear();
     processedSignals.clear();
 
 
-    joined = false;
+    if (screenStream) {
+
+        screenStream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        screenStream = null;
+    }
+
+    isScreenSharing = false;
+
+
+    if (cameraStream) {
+
+        cameraStream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        cameraStream = null;
+    }
+
+
+    localStream = null;
+    cameraTrack = null;
+    audioTrack = null;
+
+
+    if (localVideoElement) {
+        localVideoElement.srcObject = null;
+    }
+
 
     currentRoomId = null;
     currentUserId = null;
 
     isTeacher = false;
-
-    remoteContainer = null;
-    localVideoElement = null;
-
-    screenStream = null;
-    isScreenSharing = false;
-
-
-    console.log(
-        "Left live classroom."
-    );
+    joined = false;
 }
 
 
-// ============================================================
-// FORCE CLOSE CONNECTION WITH A USER
-// ============================================================
+/* =========================================================
+   ADMIN REMOVE PARTICIPANT
+========================================================= */
 
-export function removeParticipant(
+export async function removeParticipant(
     userId
 ) {
 
-    const pc =
-        peerConnections.get(
-            userId
+    if (!currentRoomId) {
+        throw new Error(
+            "No active room"
         );
-
-
-    if (pc) {
-
-        try {
-            pc.close();
-        } catch {}
-
     }
 
+    if (!isTeacher) {
+        throw new Error(
+            "Only teacher can remove participants"
+        );
+    }
 
-    peerConnections.delete(
-        userId
-    );
+    removePeer(userId);
 
-
-    removeRemoteVideo(
-        userId
+    await deleteDoc(
+        doc(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "participants",
+            userId
+        )
     );
 }
 
 
-// ============================================================
-// GET CONNECTION COUNT
-// ============================================================
+/* =========================================================
+   GETTERS
+========================================================= */
+
+export function getLocalStream() {
+    return localStream;
+}
+
+export function getCameraStream() {
+    return cameraStream;
+}
+
+export function getScreenStream() {
+    return screenStream;
+}
+
+export function getScreenShareState() {
+    return isScreenSharing;
+}
+
+export function isMuted() {
+
+    return audioTrack
+        ? !audioTrack.enabled
+        : false;
+}
+
+export function isCameraOff() {
+
+    return cameraTrack
+        ? !cameraTrack.enabled
+        : true;
+}
 
 export function getConnectionCount() {
-
     return peerConnections.size;
 }
-
-
-// ============================================================
-// EXPORT STATE
-// ============================================================
 
 export function getWebRTCState() {
 
     return {
-
         joined,
-
-        roomId:
-            currentRoomId,
-
-        userId:
-            currentUserId,
-
+        roomId: currentRoomId,
+        userId: currentUserId,
         isTeacher,
-
         cameraFacingMode,
-
         isScreenSharing,
-
-        muted:
-            isMuted(),
-
-        cameraOff:
-            isCameraOff(),
-
-        connectionCount:
+        connections:
             peerConnections.size
     };
 }
