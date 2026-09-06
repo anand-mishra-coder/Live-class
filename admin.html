@@ -3,57 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiveClass — Admin Panel</title>
+
+<title>LiveClass Admin</title>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
 :root{
-    --bg:#070b14;
-    --card:rgba(18,25,40,.78);
-    --border:rgba(255,255,255,.09);
-    --text:#f5f7fb;
-    --muted:#8e9aae;
+    --bg:#060912;
+    --panel:#0c1220;
+    --panel2:#101827;
+    --panel3:#141d2e;
+    --border:rgba(255,255,255,.08);
+    --text:#f7f8fc;
+    --muted:#8c97aa;
     --primary:#6366f1;
     --primary2:#8b5cf6;
-    --danger:#ef4444;
-    --success:#22c55e;
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#f59e0b;
+    --blue:#38bdf8;
+}
+
+html,
+body{
+    min-height:100%;
 }
 
 body{
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     background:
-        radial-gradient(circle at 10% 10%,rgba(99,102,241,.18),transparent 30%),
-        radial-gradient(circle at 90% 80%,rgba(139,92,246,.13),transparent 30%),
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(99,102,241,.13),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(139,92,246,.10),
+            transparent 30%
+        ),
         var(--bg);
     color:var(--text);
-    min-height:100vh;
-}
-
-button,
-input,
-textarea,
-select{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-.hidden{
-    display:none!important;
 }
 
 /* =====================================================
-LOGIN
+   LOGIN
 ===================================================== */
 
-.login-screen{
+.loginScreen{
     min-height:100vh;
     display:flex;
     align-items:center;
@@ -61,164 +63,253 @@ LOGIN
     padding:20px;
 }
 
-.login-card{
-    width:100%;
-    max-width:430px;
-    padding:38px;
+.loginCard{
+    width:min(430px,100%);
+    background:rgba(12,18,32,.86);
     border:1px solid var(--border);
-    background:rgba(15,21,34,.86);
-    backdrop-filter:blur(25px);
-    border-radius:28px;
-    box-shadow:0 30px 100px rgba(0,0,0,.4);
+    border-radius:24px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 30px 100px rgba(0,0,0,.45);
+    backdrop-filter:blur(20px);
 }
 
-.logo{
-    width:62px;
-    height:62px;
-    border-radius:18px;
+.logoBox{
+    width:64px;
+    height:64px;
+    border-radius:19px;
+    margin:0 auto 18px;
     display:grid;
     place-items:center;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
-    font-size:27px;
-    font-weight:800;
-    margin-bottom:24px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary2)
+        );
+    box-shadow:0 15px 40px rgba(99,102,241,.25);
 }
 
-.login-card h1{
-    font-size:30px;
+.logoBox svg{
+    width:31px;
+    height:31px;
+    fill:white;
+}
+
+.loginCard h1{
+    font-size:25px;
     margin-bottom:8px;
 }
 
-.login-card p{
+.loginCard p{
     color:var(--muted);
-    margin-bottom:28px;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:25px;
 }
 
-.google-btn{
+.googleBtn{
     width:100%;
-    padding:15px 18px;
-    border:none;
-    border-radius:14px;
+    height:48px;
+    border:1px solid var(--border);
+    border-radius:12px;
     background:#fff;
     color:#111827;
+    font-size:14px;
     font-weight:700;
+    cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:12px;
+    gap:10px;
 }
 
-.google-icon{
-    font-weight:900;
+.googleBtn svg{
+    width:20px;
+    height:20px;
+}
+
+.loginError{
+    color:#fca5a5;
+    font-size:12px;
+    margin-top:14px;
+    display:none;
 }
 
 /* =====================================================
-APP
+   APP
 ===================================================== */
 
 .app{
-    display:none;
     min-height:100vh;
+    display:none;
 }
 
-.topbar{
-    height:72px;
-    border-bottom:1px solid var(--border);
-    background:rgba(7,11,20,.76);
-    backdrop-filter:blur(18px);
+.app.show{
+    display:block;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+    height:68px;
+    position:sticky;
+    top:0;
+    z-index:200;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 24px;
-    position:sticky;
-    top:0;
-    z-index:50;
+    padding:0 20px;
+    background:rgba(6,9,18,.90);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(20px);
+}
+
+.headerLeft{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.menuBtn{
+    display:none;
+    width:38px;
+    height:38px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
 }
 
 .brand{
     display:flex;
     align-items:center;
-    gap:12px;
-}
-
-.brand-icon{
-    width:40px;
-    height:40px;
-    border-radius:12px;
-    display:grid;
-    place-items:center;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    gap:10px;
+    font-size:18px;
     font-weight:800;
 }
 
-.brand h2{
-    font-size:17px;
+.brandIcon{
+    width:37px;
+    height:37px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary2)
+    );
 }
 
-.brand small{
-    display:block;
-    color:var(--muted);
-    font-size:11px;
+.brandIcon svg{
+    width:19px;
+    height:19px;
+    fill:white;
 }
 
-.admin-profile{
+.headerRight{
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:12px;
 }
 
-.admin-profile img{
-    width:38px;
-    height:38px;
+.adminUser{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.adminUser img{
+    width:36px;
+    height:36px;
     border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,.1);
 }
 
-.logout-btn{
-    background:transparent;
-    color:#ff8b8b;
-    border:1px solid rgba(239,68,68,.25);
-    padding:9px 13px;
-    border-radius:10px;
+.adminUser span{
+    font-size:12px;
+    font-weight:600;
+}
+
+.logoutBtn{
+    height:36px;
+    padding:0 13px;
+    border-radius:9px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+    color:white;
+    cursor:pointer;
 }
 
 /* =====================================================
-LAYOUT
+   SIDEBAR
 ===================================================== */
 
-.layout{
-    display:flex;
-    min-height:calc(100vh - 72px);
-}
-
 .sidebar{
-    width:240px;
+    position:fixed;
+    left:0;
+    top:68px;
+    bottom:0;
+    width:235px;
+    background:rgba(9,14,25,.94);
     border-right:1px solid var(--border);
-    padding:20px 14px;
-    flex-shrink:0;
+    padding:18px 12px;
+    z-index:150;
 }
 
-.nav-btn{
+.navTitle{
+    color:#5f6a7d;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+    padding:0 12px;
+    margin:8px 0 10px;
+}
+
+.navBtn{
     width:100%;
-    padding:13px 14px;
-    margin-bottom:7px;
-    border:none;
+    height:44px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:0 12px;
+    border:0;
+    border-radius:10px;
     background:transparent;
     color:var(--muted);
+    cursor:pointer;
     text-align:left;
-    border-radius:12px;
-    transition:.2s;
+    margin-bottom:5px;
 }
 
-.nav-btn:hover,
-.nav-btn.active{
-    background:rgba(99,102,241,.13);
+.navBtn:hover{
+    background:rgba(255,255,255,.04);
     color:white;
 }
 
-.main{
-    flex:1;
+.navBtn.active{
+    color:white;
+    background:rgba(99,102,241,.13);
+}
+
+.navBtn svg{
+    width:18px;
+    height:18px;
+}
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.content{
+    margin-left:235px;
     padding:28px;
-    max-width:1450px;
+    max-width:1500px;
 }
 
 .page{
@@ -229,68 +320,114 @@ LAYOUT
     display:block;
 }
 
-.page-title{
-    margin-bottom:24px;
+.pageTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:23px;
 }
 
-.page-title h1{
-    font-size:28px;
+.pageTop h1{
+    font-size:25px;
+    margin-bottom:5px;
 }
 
-.page-title p{
+.pageTop p{
     color:var(--muted);
-    margin-top:6px;
+    font-size:12px;
+}
+
+.backButton{
+    height:39px;
+    padding:0 13px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+    color:white;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    cursor:pointer;
+}
+
+.backButton svg{
+    width:17px;
+    height:17px;
 }
 
 /* =====================================================
-CARDS
+   STATS
 ===================================================== */
 
-.grid{
+.stats{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:16px;
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+    gap:15px;
+    margin-bottom:25px;
 }
 
-.stat-card{
-    padding:20px;
+.statCard{
+    background:rgba(12,18,32,.82);
     border:1px solid var(--border);
-    background:var(--card);
-    border-radius:18px;
+    border-radius:16px;
+    padding:18px;
 }
 
-.stat-label{
+.statLabel{
     color:var(--muted);
-    font-size:13px;
+    font-size:11px;
+    margin-bottom:9px;
 }
 
-.stat-value{
-    font-size:28px;
+.statValue{
+    font-size:25px;
     font-weight:800;
-    margin-top:10px;
 }
+
+.statLive{
+    color:#fca5a5;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
 
 .card{
+    background:rgba(12,18,32,.84);
     border:1px solid var(--border);
-    background:var(--card);
-    backdrop-filter:blur(18px);
-    border-radius:20px;
+    border-radius:17px;
     padding:20px;
     margin-bottom:20px;
 }
 
-.card h3{
+.cardHeader{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
     margin-bottom:18px;
 }
 
+.cardHeader h2{
+    font-size:16px;
+}
+
+.cardHeader span{
+    color:var(--muted);
+    font-size:11px;
+}
+
 /* =====================================================
-FORM
+   FORM
 ===================================================== */
 
-.form-grid{
+.formGrid{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:14px;
 }
 
 .field{
@@ -304,307 +441,622 @@ FORM
 }
 
 .field label{
-    color:#b9c1d1;
-    font-size:13px;
+    color:#a8b1c1;
+    font-size:11px;
+    font-weight:600;
 }
 
 .field input,
 .field textarea,
 .field select{
     width:100%;
-    padding:13px 14px;
-    background:#0b1120;
-    color:white;
     border:1px solid var(--border);
-    border-radius:12px;
+    background:#080e19;
+    color:white;
+    border-radius:10px;
     outline:none;
+    padding:11px 12px;
+    font-size:13px;
+}
+
+.field textarea{
+    min-height:95px;
+    resize:vertical;
 }
 
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:var(--primary);
+    border-color:rgba(99,102,241,.55);
 }
 
-.field textarea{
-    min-height:100px;
-    resize:vertical;
-}
-
-.primary-btn{
-    padding:13px 18px;
-    border:none;
-    border-radius:12px;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
+.primaryBtn{
+    height:43px;
+    padding:0 18px;
+    border:0;
+    border-radius:10px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary2)
+        );
     color:white;
     font-weight:700;
+    cursor:pointer;
 }
 
-.danger-btn{
-    padding:12px 17px;
-    border:none;
-    border-radius:12px;
-    background:var(--danger);
-    color:white;
-    font-weight:700;
-}
-
-.secondary-btn{
-    padding:12px 17px;
+.secondaryBtn{
+    height:41px;
+    padding:0 15px;
     border:1px solid var(--border);
-    border-radius:12px;
-    background:#111827;
+    border-radius:10px;
+    background:rgba(255,255,255,.05);
     color:white;
+    cursor:pointer;
+}
+
+.dangerBtn{
+    height:41px;
+    padding:0 15px;
+    border:1px solid rgba(239,68,68,.2);
+    border-radius:10px;
+    background:rgba(239,68,68,.1);
+    color:#fca5a5;
+    cursor:pointer;
+}
+
+.successBtn{
+    height:41px;
+    padding:0 15px;
+    border:1px solid rgba(34,197,94,.2);
+    border-radius:10px;
+    background:rgba(34,197,94,.1);
+    color:#86efac;
+    cursor:pointer;
 }
 
 /* =====================================================
-LIVE AREA
+   LIVE CONTROL
 ===================================================== */
 
-.live-layout{
+.liveLayout{
     display:grid;
-    grid-template-columns:1.6fr .8fr;
-    gap:20px;
+    grid-template-columns:
+        minmax(0,1fr) 340px;
+    gap:18px;
 }
 
-.video-box{
-    position:relative;
-    min-height:470px;
-    background:#020617;
-    border-radius:20px;
+.videoCard{
     overflow:hidden;
+    background:#020409;
     border:1px solid var(--border);
+    border-radius:17px;
+}
+
+.videoBox{
+    height:470px;
+    position:relative;
+    background:#020409;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 #localVideo{
     width:100%;
     height:100%;
-    min-height:470px;
-    object-fit:cover;
-    background:#020617;
+    object-fit:contain;
+    background:#000;
 }
 
-.video-placeholder{
+.videoPlaceholder{
     position:absolute;
     inset:0;
-    display:grid;
-    place-items:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
     color:var(--muted);
     text-align:center;
     pointer-events:none;
 }
 
-.live-badge{
+.videoPlaceholder svg{
+    width:42px;
+    height:42px;
+    margin-bottom:12px;
+}
+
+.videoPlaceholder h3{
+    color:white;
+    font-size:16px;
+    margin-bottom:5px;
+}
+
+.videoPlaceholder p{
+    font-size:11px;
+}
+
+.liveVideoBadge{
     position:absolute;
-    top:16px;
-    left:16px;
-    background:#ef4444;
-    padding:7px 12px;
-    border-radius:9px;
-    font-size:12px;
+    left:14px;
+    top:14px;
+    display:none;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    background:rgba(239,68,68,.14);
+    border:1px solid rgba(239,68,68,.2);
+    border-radius:8px;
+    color:#fca5a5;
+    font-size:10px;
     font-weight:800;
-    z-index:2;
+    z-index:5;
 }
 
-.live-info{
-    position:absolute;
-    bottom:15px;
-    left:15px;
-    right:15px;
-    padding:13px 15px;
-    border-radius:13px;
-    background:rgba(0,0,0,.52);
-    backdrop-filter:blur(12px);
-    z-index:2;
+.liveVideoBadge.show{
+    display:flex;
 }
 
-.control-bar{
+.redDot{
+    width:7px;
+    height:7px;
+    background:#ef4444;
+    border-radius:50%;
+    box-shadow:0 0 10px #ef4444;
+}
+
+.videoControls{
+    min-height:65px;
     display:flex;
     flex-wrap:wrap;
-    gap:9px;
-    margin-top:15px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px;
+    background:#080d18;
+    border-top:1px solid var(--border);
 }
 
-.control-btn{
+.iconBtn{
+    width:42px;
+    height:42px;
+    border-radius:10px;
     border:1px solid var(--border);
-    background:#111827;
+    background:rgba(255,255,255,.04);
     color:white;
-    padding:11px 14px;
-    border-radius:11px;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
 }
 
-.control-btn.active{
-    background:rgba(99,102,241,.25);
-    border-color:rgba(99,102,241,.5);
+.iconBtn:hover{
+    background:rgba(255,255,255,.08);
 }
 
-.teacher-side{
+.iconBtn svg{
+    width:18px;
+    height:18px;
+}
+
+.iconBtn.off{
+    color:#fca5a5;
+    background:rgba(239,68,68,.1);
+}
+
+.endBtn{
+    height:42px;
+    padding:0 15px;
+    border-radius:10px;
+    border:0;
+    background:#dc2626;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+}
+
+/* =====================================================
+   LIVE SIDE
+===================================================== */
+
+.liveSide{
     display:flex;
     flex-direction:column;
     gap:15px;
 }
 
-.status-card{
-    padding:18px;
-    border-radius:18px;
+.roomCard{
+    background:rgba(12,18,32,.84);
     border:1px solid var(--border);
-    background:var(--card);
+    border-radius:15px;
+    padding:16px;
 }
 
-.status-row{
+.roomLabel{
+    color:var(--muted);
+    font-size:10px;
+    margin-bottom:7px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.roomId{
     display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid var(--border);
+    align-items:center;
+    gap:7px;
 }
 
-.status-row:last-child{
-    border-bottom:none;
+.roomId input{
+    flex:1;
+    min-width:0;
+    height:39px;
+    border:1px solid var(--border);
+    background:#080e19;
+    color:white;
+    border-radius:9px;
+    padding:0 10px;
+    font-size:11px;
 }
 
-.status-value{
-    color:var(--success);
+.copyBtn{
+    height:39px;
+    width:42px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+    color:white;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+.participants{
+    max-height:330px;
+    overflow-y:auto;
+}
+
+.participant{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px;
+    border-radius:10px;
+    background:rgba(255,255,255,.025);
+    margin-bottom:7px;
+}
+
+.participantAvatar{
+    width:33px;
+    height:33px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary2)
+    );
+    font-size:11px;
+    font-weight:800;
+    flex:none;
+}
+
+.participantInfo{
+    min-width:0;
+    flex:1;
+}
+
+.participantInfo strong{
+    display:block;
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.participantInfo span{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+}
+
+.blockBtn{
+    width:32px;
+    height:32px;
+    border:1px solid rgba(239,68,68,.18);
+    background:rgba(239,68,68,.08);
+    color:#fca5a5;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.blockBtn svg{
+    width:14px;
+    height:14px;
+}
+
+.unblockBtn{
+    border-color:rgba(34,197,94,.18);
+    background:rgba(34,197,94,.08);
+    color:#86efac;
 }
 
 /* =====================================================
-TABLE
+   CHAT
 ===================================================== */
 
-.table-wrap{
-    overflow:auto;
+.chatBox{
+    max-height:370px;
+    overflow-y:auto;
+    padding-right:4px;
+}
+
+.chatMessage{
+    display:flex;
+    gap:8px;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.chatAvatar{
+    width:31px;
+    height:31px;
+    border-radius:50%;
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary2)
+    );
+    display:grid;
+    place-items:center;
+    font-size:10px;
+    font-weight:800;
+    flex:none;
+}
+
+.chatBody{
+    min-width:0;
+    flex:1;
+}
+
+.chatName{
+    font-size:11px;
+    font-weight:700;
+}
+
+.chatText{
+    color:#d8deea;
+    font-size:12px;
+    line-height:1.45;
+    margin-top:3px;
+    word-break:break-word;
+}
+
+.chatTime{
+    color:#657084;
+    font-size:9px;
+    margin-top:4px;
+}
+
+.deleteMessage{
+    width:29px;
+    height:29px;
+    border-radius:7px;
+    border:1px solid rgba(239,68,68,.15);
+    background:rgba(239,68,68,.06);
+    color:#fca5a5;
+    cursor:pointer;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.tableWrap{
+    width:100%;
+    overflow-x:auto;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-}
-
-th,
-td{
-    padding:14px;
-    text-align:left;
-    border-bottom:1px solid var(--border);
-    white-space:nowrap;
+    min-width:750px;
 }
 
 th{
-    color:var(--muted);
+    text-align:left;
+    color:#7f8a9e;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:12px;
+    border-bottom:1px solid var(--border);
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,.045);
     font-size:12px;
 }
 
-.action-btn{
-    border:none;
-    padding:8px 11px;
-    border-radius:8px;
-    background:#1f2937;
-    color:white;
-    margin-right:5px;
+.thumbnailSmall{
+    width:70px;
+    height:42px;
+    border-radius:7px;
+    object-fit:cover;
+    background:#151d2d;
 }
 
-.action-btn.delete{
-    color:#ff8b8b;
+.statusPill{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:5px 8px;
+    border-radius:7px;
+    font-size:9px;
+    font-weight:800;
 }
 
-/* =====================================================
-TOAST
-===================================================== */
-
-.toast{
-    position:fixed;
-    bottom:22px;
-    right:22px;
-    padding:14px 18px;
-    border-radius:13px;
-    background:#111827;
-    border:1px solid var(--border);
-    box-shadow:0 15px 40px rgba(0,0,0,.35);
-    transform:translateY(120px);
-    opacity:0;
-    transition:.3s;
-    z-index:100;
+.statusPill.live{
+    background:rgba(239,68,68,.1);
+    color:#fca5a5;
 }
 
-.toast.show{
-    transform:translateY(0);
-    opacity:1;
+.statusPill.ended{
+    background:rgba(255,255,255,.05);
+    color:var(--muted);
 }
 
 /* =====================================================
-MODAL
+   MODAL
 ===================================================== */
 
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.72);
+    z-index:1000;
+    background:rgba(0,0,0,.68);
+    backdrop-filter:blur(8px);
     display:none;
-    place-items:center;
+    align-items:center;
+    justify-content:center;
     padding:20px;
-    z-index:200;
 }
 
 .modal.show{
-    display:grid;
-}
-
-.modal-box{
-    width:100%;
-    max-width:460px;
-    background:#0d1422;
-    border:1px solid var(--border);
-    border-radius:22px;
-    padding:25px;
-}
-
-.modal-actions{
     display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    margin-top:22px;
+}
+
+.modalBox{
+    width:min(420px,100%);
+    background:#101827;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:22px;
+}
+
+.modalBox h3{
+    font-size:17px;
+    margin-bottom:7px;
+}
+
+.modalBox p{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.55;
+}
+
+.modalActions{
+    display:flex;
+    gap:9px;
+    margin-top:20px;
+}
+
+.modalActions button{
+    flex:1;
+    height:42px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.05);
+    color:white;
+    cursor:pointer;
 }
 
 /* =====================================================
-RESPONSIVE
+   TOAST
 ===================================================== */
 
-@media(max-width:1100px){
-
-    .grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .live-layout{
-        grid-template-columns:1fr;
-    }
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    z-index:2000;
+    transform:translateX(-50%) translateY(15px);
+    padding:11px 16px;
+    background:#151d2d;
+    border:1px solid var(--border);
+    border-radius:10px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
 }
 
-@media(max-width:760px){
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:1050px){
+
+    .liveLayout{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+}
+
+@media(max-width:800px){
+
+    .menuBtn{
+        display:grid;
+        place-items:center;
+    }
 
     .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+        box-shadow:20px 0 50px rgba(0,0,0,.35);
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .content{
+        margin-left:0;
+        padding:18px 13px;
+    }
+
+    .header{
+        padding:0 12px;
+    }
+
+    .adminUser span{
         display:none;
     }
 
-    .main{
-        padding:18px;
+    .brand{
+        font-size:16px;
     }
 
-    .topbar{
-        padding:0 15px;
-    }
+}
 
-    .brand h2{
-        font-size:15px;
-    }
+@media(max-width:600px){
 
-    .logout-btn{
-        font-size:12px;
-    }
-
-    .grid{
+    .stats{
         grid-template-columns:1fr 1fr;
+        gap:9px;
     }
 
-    .form-grid{
+    .statCard{
+        padding:13px;
+    }
+
+    .statValue{
+        font-size:20px;
+    }
+
+    .formGrid{
         grid-template-columns:1fr;
     }
 
@@ -612,21 +1064,33 @@ RESPONSIVE
         grid-column:auto;
     }
 
-    .video-box,
-    #localVideo{
-        min-height:300px;
-    }
-}
-
-@media(max-width:450px){
-
-    .grid{
-        grid-template-columns:1fr;
+    .videoBox{
+        height:310px;
     }
 
-    .login-card{
-        padding:25px;
+    .pageTop{
+        align-items:flex-start;
+        flex-direction:column;
     }
+
+    .pageTop h1{
+        font-size:21px;
+    }
+
+    .videoControls{
+        gap:6px;
+    }
+
+    .iconBtn{
+        width:39px;
+        height:39px;
+    }
+
+    .endBtn{
+        padding:0 11px;
+        font-size:11px;
+    }
+
 }
 </style>
 </head>
@@ -634,26 +1098,60 @@ RESPONSIVE
 <body>
 
 <!-- =====================================================
-LOGIN
+     LOGIN
 ===================================================== -->
 
-<section id="loginScreen" class="login-screen">
+<section id="loginScreen" class="loginScreen">
 
-    <div class="login-card">
+    <div class="loginCard">
 
-        <div class="logo">LC</div>
+        <div class="logoBox">
 
-        <h1>Admin Panel</h1>
+            <svg viewBox="0 0 24 24">
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13ZM8 7h8v2H8V7Zm0 4h8v2H8v-2Zm0 4h5v2H8v-2Z"/>
+            </svg>
+
+        </div>
+
+        <h1>LiveClass Admin</h1>
 
         <p>
-            Manage live classes, recorded lectures
-            and your classroom system.
+            Sign in with your authorized Google account
+            to manage live and recorded classes.
         </p>
 
-        <button id="googleLogin" class="google-btn">
-            <span class="google-icon">G</span>
+        <button
+            id="googleLogin"
+            class="googleBtn">
+
+            <svg viewBox="0 0 24 24">
+
+                <path
+                    fill="#4285F4"
+                    d="M21.35 12.23c0-.79-.07-1.55-.2-2.28H12v4.32h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.43Z"/>
+
+                <path
+                    fill="#34A853"
+                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.29v2.53A9.74 9.74 0 0 0 12 21.75Z"/>
+
+                <path
+                    fill="#FBBC05"
+                    d="M6.54 13.84A5.85 5.85 0 0 1 6.24 12c0-.64.11-1.27.3-1.84V7.63H3.29A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.04 4.37l3.25-2.53Z"/>
+
+                <path
+                    fill="#EA4335"
+                    d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.25 14.63 2.25 12 2.25a9.74 9.74 0 0 0-8.71 5.38l3.25 2.53C7.31 7.85 9.46 6.13 12 6.13Z"/>
+
+            </svg>
+
             Continue with Google
+
         </button>
+
+        <div
+            id="loginError"
+            class="loginError">
+        </div>
 
     </div>
 
@@ -661,372 +1159,262 @@ LOGIN
 
 
 <!-- =====================================================
-APP
+     APP
 ===================================================== -->
 
 <div id="app" class="app">
 
-<header class="topbar">
+    <!-- HEADER -->
 
-    <div class="brand">
+    <header class="header">
 
-        <div class="brand-icon">
-            LC
+        <div class="headerLeft">
+
+            <button
+                id="menuBtn"
+                class="menuBtn">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+
+                    <path d="M4 6h16"/>
+                    <path d="M4 12h16"/>
+                    <path d="M4 18h16"/>
+
+                </svg>
+
+            </button>
+
+
+            <div class="brand">
+
+                <div class="brandIcon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13Z"/>
+                    </svg>
+
+                </div>
+
+                LiveClass Admin
+
+            </div>
+
         </div>
 
-        <div>
-            <h2>LiveClass Admin</h2>
-            <small>Teacher Control Center</small>
+
+        <div class="headerRight">
+
+            <div class="adminUser">
+
+                <img
+                    id="adminPhoto"
+                    src=""
+                    alt="Admin">
+
+                <span id="adminName">
+                    Admin
+                </span>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="logoutBtn">
+
+                Logout
+
+            </button>
+
         </div>
 
-    </div>
+    </header>
 
 
-    <div class="admin-profile">
+    <!-- SIDEBAR -->
 
-        <img
-            id="adminPhoto"
-            src=""
-            alt="Admin"
-        >
+    <aside id="sidebar" class="sidebar">
+
+        <div class="navTitle">
+            MANAGEMENT
+        </div>
+
 
         <button
-            id="logoutBtn"
-            class="logout-btn"
-        >
-            Logout
+            class="navBtn active"
+            data-page="dashboardPage">
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8">
+
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+
+            </svg>
+
+            Dashboard
+
         </button>
 
-    </div>
 
-</header>
+        <button
+            class="navBtn"
+            data-page="livePage">
 
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8">
 
-<div class="layout">
+                <rect x="3" y="5" width="14" height="14" rx="2"/>
+                <path d="m17 10 4-2v8l-4-2"/>
 
-<!-- =====================================================
-SIDEBAR
-===================================================== -->
+            </svg>
 
-<aside class="sidebar">
+            Live Class
 
-    <button
-        class="nav-btn active"
-        data-page="dashboardPage"
-    >
-        Dashboard
-    </button>
-
-    <button
-        class="nav-btn"
-        data-page="livePage"
-    >
-        Live Class
-    </button>
-
-    <button
-        class="nav-btn"
-        data-page="recordedPage"
-    >
-        Recorded Lectures
-    </button>
-
-</aside>
+        </button>
 
 
-<!-- =====================================================
-MAIN
-===================================================== -->
+        <button
+            class="navBtn"
+            data-page="recordedPage">
 
-<main class="main">
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8">
 
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <path d="m10 9 5 3-5 3V9Z"/>
 
-<!-- =====================================================
-DASHBOARD
-===================================================== -->
+            </svg>
 
-<section
-    id="dashboardPage"
-    class="page active"
->
+            Recorded Classes
 
-    <div class="page-title">
-
-        <h1>Dashboard</h1>
-
-        <p>
-            Manage your complete classroom system.
-        </p>
-
-    </div>
+        </button>
 
 
-    <div class="grid">
-
-        <div class="stat-card">
-
-            <div class="stat-label">
-                Recorded Lectures
-            </div>
-
-            <div
-                id="recordedCount"
-                class="stat-value"
-            >
-                0
-            </div>
-
+        <div class="navTitle">
+            ACCOUNT
         </div>
 
 
-        <div class="stat-card">
+        <button
+            id="sidebarLogout"
+            class="navBtn">
 
-            <div class="stat-label">
-                Live Status
-            </div>
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8">
 
-            <div
-                id="liveStatus"
-                class="stat-value"
-            >
-                Offline
-            </div>
+                <path d="M10 17l5-5-5-5"/>
+                <path d="M15 12H3"/>
+                <path d="M21 3v18"/>
 
-        </div>
+            </svg>
 
+            Logout
 
-        <div class="stat-card">
+        </button>
 
-            <div class="stat-label">
-                Students Online
-            </div>
+    </aside>
 
-            <div
-                id="studentCount"
-                class="stat-value"
-            >
-                0
-            </div>
 
-        </div>
+    <!-- CONTENT -->
 
+    <main class="content">
 
-        <div class="stat-card">
 
-            <div class="stat-label">
-                Admin
-            </div>
+        <!-- =================================================
+             DASHBOARD
+        ================================================= -->
 
-            <div
-                id="adminName"
-                class="stat-value"
-                style="font-size:17px"
-            >
-                —
-            </div>
+        <section
+            id="dashboardPage"
+            class="page active">
 
-        </div>
+            <div class="pageTop">
 
-    </div>
+                <div>
 
+                    <h1>Dashboard</h1>
 
-    <div class="card" style="margin-top:20px">
+                    <p>
+                        Manage your live classroom and lectures.
+                    </p>
 
-        <h3>Quick Actions</h3>
-
-        <div class="control-bar">
-
-            <button
-                class="primary-btn"
-                onclick="openPage('livePage')"
-            >
-                Start Live Class
-            </button>
-
-            <button
-                class="secondary-btn"
-                onclick="openPage('recordedPage')"
-            >
-                Add Recorded Lecture
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-LIVE PAGE
-===================================================== -->
-
-<section
-    id="livePage"
-    class="page"
->
-
-    <div class="page-title">
-
-        <h1>Live Class</h1>
-
-        <p>
-            Start and control your live classroom.
-        </p>
-
-    </div>
-
-
-    <div
-        id="liveSetup"
-        class="card"
-    >
-
-        <h3>Class Details</h3>
-
-        <div class="form-grid">
-
-            <div class="field">
-
-                <label>
-                    Class Title
-                </label>
-
-                <input
-                    id="liveTitle"
-                    placeholder="Class 11 Physics — Vector Analysis"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Subject
-                </label>
-
-                <select id="liveSubject">
-
-                    <option>
-                        Physics
-                    </option>
-
-                    <option>
-                        Chemistry
-                    </option>
-
-                    <option>
-                        Mathematics
-                    </option>
-
-                    <option>
-                        Biology
-                    </option>
-
-                    <option>
-                        English
-                    </option>
-
-                    <option>
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Chapter
-                </label>
-
-                <input
-                    id="liveChapter"
-                    placeholder="Vector"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Room ID
-                </label>
-
-                <input
-                    id="roomId"
-                    placeholder="Leave blank for automatic ID"
-                >
-
-            </div>
-
-        </div>
-
-
-        <div style="margin-top:18px">
-
-            <button
-                id="startLiveBtn"
-                class="primary-btn"
-            >
-                Start Live Class
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- LIVE CONTROL -->
-
-    <div
-        id="liveControl"
-        class="live-layout hidden"
-    >
-
-        <div>
-
-            <div class="video-box">
-
-                <div class="live-badge">
-                    LIVE
                 </div>
 
-                <video
-                    id="localVideo"
-                    autoplay
-                    playsinline
-                    muted
-                ></video>
+            </div>
 
-                <div
-                    id="videoPlaceholder"
-                    class="video-placeholder"
-                >
-                    <div>
-                        <h3>Camera Preview</h3>
-                        <p>
-                            Camera is currently off.
-                        </p>
+
+            <div class="stats">
+
+                <div class="statCard">
+
+                    <div class="statLabel">
+                        Recorded Classes
                     </div>
-                </div>
-
-
-                <div class="live-info">
-
-                    <strong id="liveTitleDisplay">
-                        Live Class
-                    </strong>
 
                     <div
-                        id="roomDisplay"
-                        style="color:#aab2c2;font-size:12px;margin-top:4px"
-                    >
-                        Room:
+                        id="statRecorded"
+                        class="statValue">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="statCard">
+
+                    <div class="statLabel">
+                        Live Classes
+                    </div>
+
+                    <div
+                        id="statLive"
+                        class="statValue statLive">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="statCard">
+
+                    <div class="statLabel">
+                        Students Online
+                    </div>
+
+                    <div
+                        id="statStudents"
+                        class="statValue">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="statCard">
+
+                    <div class="statLabel">
+                        Admin Status
+                    </div>
+
+                    <div
+                        id="statStatus"
+                        class="statValue"
+                        style="font-size:16px;">
+                        Secure
                     </div>
 
                 </div>
@@ -1034,380 +1422,832 @@ LIVE PAGE
             </div>
 
 
-            <div class="control-bar">
+            <div class="card">
 
-                <button
-                    id="muteBtn"
-                    class="control-btn"
-                >
-                    Mic ON
-                </button>
+                <div class="cardHeader">
 
-                <button
-                    id="cameraBtn"
-                    class="control-btn"
-                >
-                    Camera ON
-                </button>
-
-                <button
-                    id="switchCameraBtn"
-                    class="control-btn"
-                >
-                    Switch Camera
-                </button>
-
-                <button
-                    id="screenBtn"
-                    class="control-btn"
-                >
-                    Share Screen
-                </button>
-
-                <button
-                    id="recordBtn"
-                    class="control-btn"
-                >
-                    Start Recording
-                </button>
-
-                <button
-                    id="downloadBtn"
-                    class="control-btn hidden"
-                >
-                    Download Recording
-                </button>
-
-                <button
-                    id="endLiveBtn"
-                    class="danger-btn"
-                >
-                    End Live
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <aside class="teacher-side">
-
-            <div class="status-card">
-
-                <h3>Live Status</h3>
-
-                <div class="status-row">
-
-                    <span>
-                        Connection
-                    </span>
-
-                    <span
-                        id="connectionStatus"
-                        class="status-value"
-                    >
-                        Connected
-                    </span>
+                    <h2>Quick Actions</h2>
 
                 </div>
 
 
-                <div class="status-row">
+                <div style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:10px;
+                ">
 
-                    <span>
-                        Students
-                    </span>
+                    <button
+                        class="primaryBtn"
+                        id="goLiveBtn">
 
-                    <strong id="liveStudentCount">
-                        0
-                    </strong>
+                        Start Live Class
 
-                </div>
-
-
-                <div class="status-row">
-
-                    <span>
-                        Microphone
-                    </span>
-
-                    <span id="micStatus">
-                        ON
-                    </span>
-
-                </div>
+                    </button>
 
 
-                <div class="status-row">
+                    <button
+                        class="secondaryBtn"
+                        id="addLectureBtn">
 
-                    <span>
-                        Camera
-                    </span>
+                        Add Recorded Class
 
-                    <span id="cameraStatus">
-                        ON
-                    </span>
-
-                </div>
-
-
-                <div class="status-row">
-
-                    <span>
-                        Recording
-                    </span>
-
-                    <span id="recordStatus">
-                        OFF
-                    </span>
+                    </button>
 
                 </div>
 
             </div>
 
+        </section>
 
-            <div class="status-card">
 
-                <h3>Student Room</h3>
+        <!-- =================================================
+             LIVE
+        ================================================= -->
 
-                <p
-                    id="studentRoomLink"
-                    style="
-                    color:#9aa4b7;
-                    font-size:13px;
-                    line-height:1.6;
-                    word-break:break-all;
-                    "
-                >
-                    Start the live class to generate room information.
-                </p>
+        <section
+            id="livePage"
+            class="page">
+
+            <div class="pageTop">
+
+                <div>
+
+                    <h1>Live Class</h1>
+
+                    <p>
+                        Start and control your live classroom.
+                    </p>
+
+                </div>
+
 
                 <button
-                    id="copyRoomBtn"
-                    class="secondary-btn"
-                    style="margin-top:12px;width:100%"
-                >
-                    Copy Room ID
+                    class="backButton"
+                    data-back="dashboardPage">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <path d="M19 12H5"/>
+                        <path d="m12 19-7-7 7-7"/>
+
+                    </svg>
+
+                    Back
+
                 </button>
 
             </div>
 
-        </aside>
 
-    </div>
+            <!-- LIVE SETUP -->
 
-</section>
+            <div
+                id="liveSetup"
+                class="card">
 
+                <div class="cardHeader">
 
-<!-- =====================================================
-RECORDED PAGE
-===================================================== -->
+                    <div>
 
-<section
-    id="recordedPage"
-    class="page"
->
+                        <h2>Live Class Setup</h2>
 
-    <div class="page-title">
+                        <span>
+                            Create a new live room
+                        </span>
 
-        <h1>Recorded Lectures</h1>
+                    </div>
 
-        <p>
-            Add lectures that students can watch anytime.
-        </p>
-
-    </div>
+                </div>
 
 
-    <div class="card">
+                <div class="formGrid">
 
-        <h3>Add New Lecture</h3>
+                    <div class="field">
 
-        <div class="form-grid">
+                        <label>
+                            Class Title
+                        </label>
 
-            <div class="field">
+                        <input
+                            id="liveTitle"
+                            type="text"
+                            placeholder="Physics Live Class">
 
-                <label>
-                    Lecture Title
-                </label>
-
-                <input
-                    id="lectureTitle"
-                    placeholder="Class 11 Physics — Vector Analysis"
-                >
-
-            </div>
+                    </div>
 
 
-            <div class="field">
+                    <div class="field">
 
-                <label>
-                    Subject
-                </label>
+                        <label>
+                            Subject
+                        </label>
 
-                <select id="lectureSubject">
+                        <input
+                            id="liveSubject"
+                            type="text"
+                            placeholder="Physics">
 
-                    <option>Physics</option>
-                    <option>Chemistry</option>
-                    <option>Mathematics</option>
-                    <option>Biology</option>
-                    <option>English</option>
-                    <option>Other</option>
-
-                </select>
-
-            </div>
+                    </div>
 
 
-            <div class="field">
+                    <div class="field">
 
-                <label>
-                    Chapter
-                </label>
+                        <label>
+                            Chapter
+                        </label>
 
-                <input
-                    id="lectureChapter"
-                    placeholder="Vector"
-                >
+                        <input
+                            id="liveChapter"
+                            type="text"
+                            placeholder="Units & Dimensions">
 
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Thumbnail URL
-                </label>
-
-                <input
-                    id="lectureThumbnail"
-                    placeholder="https://..."
-                >
-
-            </div>
+                    </div>
 
 
-            <div class="field full">
+                    <div class="field">
 
-                <label>
-                    Google Drive Video URL
-                </label>
+                        <label>
+                            Room ID
+                        </label>
 
-                <input
-                    id="lectureVideo"
-                    placeholder="https://drive.google.com/file/d/FILE_ID/view"
-                >
+                        <input
+                            id="roomIdInput"
+                            type="text"
+                            placeholder="physics-room-01">
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <button
+                            id="startLiveBtn"
+                            class="primaryBtn">
+
+                            Start Live Class
+
+                        </button>
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="field full">
+            <!-- LIVE CONTROL -->
 
-                <label>
-                    Description
-                </label>
+            <div
+                id="liveControl"
+                style="display:none;">
 
-                <textarea
-                    id="lectureDescription"
-                    placeholder="Lecture description..."
-                ></textarea>
+                <div class="liveLayout">
+
+
+                    <!-- VIDEO -->
+
+                    <div class="videoCard">
+
+                        <div class="videoBox">
+
+                            <video
+                                id="localVideo"
+                                autoplay
+                                playsinline
+                                muted>
+                            </video>
+
+
+                            <div
+                                id="videoPlaceholder"
+                                class="videoPlaceholder">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.6">
+
+                                    <rect x="3" y="5"
+                                          width="18"
+                                          height="14"
+                                          rx="2"/>
+
+                                    <path d="m10 9 5 3-5 3V9Z"/>
+
+                                </svg>
+
+                                <h3>
+                                    Camera Preview
+                                </h3>
+
+                                <p>
+                                    Camera is currently off.
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                id="liveVideoBadge"
+                                class="liveVideoBadge">
+
+                                <span class="redDot"></span>
+
+                                LIVE
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="videoControls">
+
+
+                            <!-- MIC -->
+
+                            <button
+                                id="micBtn"
+                                class="iconBtn"
+                                title="Microphone">
+
+                                <svg
+                                    id="micIcon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8">
+
+                                    <rect
+                                        x="9"
+                                        y="2"
+                                        width="6"
+                                        height="12"
+                                        rx="3"/>
+
+                                    <path d="M5 10a7 7 0 0 0 14 0"/>
+                                    <path d="M12 19v3"/>
+                                    <path d="M8 22h8"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- CAMERA -->
+
+                            <button
+                                id="cameraBtn"
+                                class="iconBtn"
+                                title="Camera">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+
+                                    <rect x="3" y="6"
+                                          width="13"
+                                          height="12"
+                                          rx="2"/>
+
+                                    <path d="m16 10 5-3v10l-5-3"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- SWITCH CAMERA -->
+
+                            <button
+                                id="switchCameraBtn"
+                                class="iconBtn"
+                                title="Front / Back Camera">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.7">
+
+                                    <path d="M20 8V4h-4"/>
+                                    <path d="M4 16v4h4"/>
+                                    <path d="M20 4l-5 5"/>
+                                    <path d="m4 20 5-5"/>
+                                    <path d="M15 9a5 5 0 0 0-8 1"/>
+                                    <path d="M9 15a5 5 0 0 0 8-1"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- SCREEN -->
+
+                            <button
+                                id="screenBtn"
+                                class="iconBtn"
+                                title="Share Screen">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+
+                                    <rect x="3" y="4"
+                                          width="18"
+                                          height="13"
+                                          rx="2"/>
+
+                                    <path d="M8 21h8"/>
+                                    <path d="M12 17v4"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- RECORD -->
+
+                            <button
+                                id="recordBtn"
+                                class="iconBtn"
+                                title="Record">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+
+                                    <circle cx="12"
+                                            cy="12"
+                                            r="8"/>
+
+                                    <circle cx="12"
+                                            cy="12"
+                                            r="3"
+                                            fill="currentColor"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- DOWNLOAD -->
+
+                            <button
+                                id="downloadBtn"
+                                class="iconBtn"
+                                title="Download Recording">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+
+                                    <path d="M12 3v12"/>
+                                    <path d="m7 10 5 5 5-5"/>
+                                    <path d="M5 21h14"/>
+
+                                </svg>
+
+                            </button>
+
+
+                            <!-- END -->
+
+                            <button
+                                id="endLiveBtn"
+                                class="endBtn">
+
+                                End Live
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SIDE -->
+
+                    <div class="liveSide">
+
+
+                        <!-- ROOM -->
+
+                        <div class="roomCard">
+
+                            <div class="roomLabel">
+                                Student Room ID
+                            </div>
+
+
+                            <div class="roomId">
+
+                                <input
+                                    id="activeRoomId"
+                                    readonly>
+
+                                <button
+                                    id="copyRoomBtn"
+                                    class="copyBtn"
+                                    title="Copy">
+
+                                    <svg viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.8">
+
+                                        <rect x="9" y="9"
+                                              width="11"
+                                              height="11"
+                                              rx="2"/>
+
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+
+                                    </svg>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PARTICIPANTS -->
+
+                        <div class="roomCard">
+
+                            <div class="cardHeader">
+
+                                <h2>
+                                    Students
+                                </h2>
+
+                                <span id="participantCount">
+                                    0
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                id="participants"
+                                class="participants">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CHAT -->
+
+                        <div class="roomCard">
+
+                            <div class="cardHeader">
+
+                                <h2>
+                                    Live Chat
+                                </h2>
+
+                            </div>
+
+
+                            <div
+                                id="adminChat"
+                                class="chatBox">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ANNOUNCEMENT -->
+
+                        <div class="roomCard">
+
+                            <div class="roomLabel">
+                                Announcement
+                            </div>
+
+
+                            <div style="
+                                display:flex;
+                                gap:7px;
+                            ">
+
+                                <input
+                                    id="announcementInput"
+                                    type="text"
+                                    placeholder="Type announcement..."
+                                    style="
+                                        flex:1;
+                                        min-width:0;
+                                        height:39px;
+                                        border:1px solid var(--border);
+                                        background:#080e19;
+                                        color:white;
+                                        border-radius:9px;
+                                        padding:0 10px;
+                                        outline:none;
+                                        font-size:11px;
+                                    ">
+
+
+                                <button
+                                    id="announcementBtn"
+                                    class="secondaryBtn">
+
+                                    Send
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
+        </section>
 
 
-        <div style="margin-top:18px">
+        <!-- =================================================
+             RECORDED
+        ================================================= -->
 
-            <button
-                id="addLectureBtn"
-                class="primary-btn"
-            >
-                Add Lecture
-            </button>
+        <section
+            id="recordedPage"
+            class="page">
 
-        </div>
+            <div class="pageTop">
 
-    </div>
+                <div>
+
+                    <h1>Recorded Classes</h1>
+
+                    <p>
+                        Add and manage recorded lectures.
+                    </p>
+
+                </div>
 
 
-    <div class="card">
+                <button
+                    class="backButton"
+                    data-back="dashboardPage">
 
-        <h3>All Lectures</h3>
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
 
-        <div class="table-wrap">
+                        <path d="M19 12H5"/>
+                        <path d="m12 19-7-7 7-7"/>
 
-            <table>
+                    </svg>
 
-                <thead>
+                    Back
 
-                    <tr>
-                        <th>Title</th>
-                        <th>Subject</th>
-                        <th>Chapter</th>
-                        <th>Created</th>
-                        <th>Action</th>
-                    </tr>
+                </button>
 
-                </thead>
+            </div>
 
-                <tbody id="lectureTable"></tbody>
 
-            </table>
+            <!-- ADD -->
 
-        </div>
+            <div class="card">
 
-    </div>
+                <div class="cardHeader">
 
-</section>
+                    <div>
 
-</main>
+                        <h2>
+                            Add Recorded Lecture
+                        </h2>
+
+                        <span>
+                            Video can be hosted on Google Drive.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="lectureForm"
+                    class="formGrid">
+
+
+                    <div class="field">
+
+                        <label>
+                            Lecture Title
+                        </label>
+
+                        <input
+                            id="lectureTitle"
+                            required
+                            placeholder="Motion in a Straight Line">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Subject
+                        </label>
+
+                        <input
+                            id="lectureSubject"
+                            required
+                            placeholder="Physics">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Chapter
+                        </label>
+
+                        <input
+                            id="lectureChapter"
+                            placeholder="Kinematics">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Thumbnail URL
+                        </label>
+
+                        <input
+                            id="lectureThumbnail"
+                            placeholder="https://...">
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Google Drive Video URL
+                        </label>
+
+                        <input
+                            id="lectureVideoUrl"
+                            required
+                            placeholder="https://drive.google.com/file/d/FILE_ID/view">
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="lectureDescription"
+                            placeholder="Lecture description..."></textarea>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <button
+                            class="primaryBtn"
+                            type="submit">
+
+                            Add Recorded Class
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- LIST -->
+
+            <div class="card">
+
+                <div class="cardHeader">
+
+                    <h2>
+                        All Recorded Classes
+                    </h2>
+
+                    <span id="lectureCount">
+                        0 lectures
+                    </span>
+
+                </div>
+
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Thumbnail
+                                </th>
+
+                                <th>
+                                    Title
+                                </th>
+
+                                <th>
+                                    Subject
+                                </th>
+
+                                <th>
+                                    Chapter
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="lectureTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
-</div>
-
 
 <!-- =====================================================
-CONFIRM MODAL
+     CONFIRM MODAL
 ===================================================== -->
 
 <div
     id="confirmModal"
-    class="modal"
->
+    class="modal">
 
-    <div class="modal-box">
+    <div class="modalBox">
 
-        <h3>
-            End Live Class?
+        <h3 id="modalTitle">
+            Confirm Action
         </h3>
 
-        <p
-            style="
-            color:#9aa4b7;
-            margin-top:9px;
-            line-height:1.6;
-            "
-        >
-            This will end the current live session for students.
+        <p id="modalText">
+            Are you sure?
         </p>
 
 
-        <div class="modal-actions">
+        <div class="modalActions">
 
             <button
-                id="cancelEndBtn"
-                class="secondary-btn"
-            >
+                id="modalCancel">
+
                 Cancel
+
             </button>
 
+
             <button
-                id="confirmEndBtn"
-                class="danger-btn"
-            >
-                End Live
+                id="modalConfirm"
+                class="dangerBtn">
+
+                Confirm
+
             </button>
 
         </div>
@@ -1417,19 +2257,11 @@ CONFIRM MODAL
 </div>
 
 
-<!-- =====================================================
-TOAST
-===================================================== -->
-
 <div
     id="toast"
-    class="toast"
-></div>
+    class="toast">
+</div>
 
-
-<!-- =====================================================
-JAVASCRIPT
-===================================================== -->
 
 <script type="module">
 
@@ -1440,45 +2272,77 @@ import {
     signInWithPopup,
     signOut,
     onAuthStateChanged,
+
     collection,
     doc,
     addDoc,
     setDoc,
     getDocs,
-    deleteDoc,
     updateDoc,
+    deleteDoc,
     onSnapshot,
-    query,
-    orderBy,
     serverTimestamp
 } from "./firebase.js";
 
 
 import {
-    startCamera,
+    joinRoom,
+    leaveRoom,
     switchCamera,
     toggleMute,
     toggleCamera,
     startScreenShare,
-    stopScreenShare,
-    joinRoom,
-    leaveRoom
+    stopScreenShare
 } from "./webrtc.js";
 
 
-// =====================================================
-// ADMIN UID
-// =====================================================
+/* =====================================================
+   ADMIN CONFIG
+===================================================== */
 
-// IMPORTANT:
-// यहाँ अपना Firebase Admin UID डालो.
+/*
+ * IMPORTANT:
+ *
+ * यहाँ Firebase Authentication में अपने
+ * Admin account का UID डालना है।
+ *
+ * API KEY नहीं।
+ */
 
-const ADMIN_UID = "sS2Jh9nxFyPxusF5GXKXDUSuKwp2";
+const ADMIN_UID =
+    "YOUR_ADMIN_UID";
 
 
-// =====================================================
-// ELEMENTS
-// =====================================================
+/* =====================================================
+   STATE
+===================================================== */
+
+let currentUser = null;
+
+let currentRoomId = null;
+
+let currentLiveDocId = null;
+
+let liveActive = false;
+
+let participantsUnsubscribe = null;
+
+let chatUnsubscribe = null;
+
+let liveUnsubscribe = null;
+
+let lectureUnsubscribe = null;
+
+let recording = null;
+
+let recordedChunks = [];
+
+let screenSharing = false;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 const loginScreen =
     document.getElementById("loginScreen");
@@ -1486,150 +2350,66 @@ const loginScreen =
 const app =
     document.getElementById("app");
 
+const loginError =
+    document.getElementById("loginError");
+
 const googleLogin =
     document.getElementById("googleLogin");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-const adminPhoto =
-    document.getElementById("adminPhoto");
 
 const adminName =
     document.getElementById("adminName");
 
-const recordedCount =
-    document.getElementById("recordedCount");
-
-const liveStatus =
-    document.getElementById("liveStatus");
-
-const studentCount =
-    document.getElementById("studentCount");
+const adminPhoto =
+    document.getElementById("adminPhoto");
 
 
-// =====================================================
-// STATE
-// =====================================================
-
-let currentUser = null;
-
-let currentRoomId = null;
-
-let liveDocId = null;
-
-let liveStarted = false;
-
-let screenSharing = false;
-
-let mediaRecorder = null;
-
-let recordedChunks = [];
-
-let recordingBlob = null;
-
-let unsubscribeLive = null;
-
-let unsubscribeParticipants = null;
-
-
-// =====================================================
-// TOAST
-// =====================================================
-
-function toast(message){
-
-    const el =
-        document.getElementById("toast");
-
-    el.textContent =
-        message;
-
-    el.classList.add("show");
-
-    setTimeout(() => {
-
-        el.classList.remove("show");
-
-    },3000);
-}
-
-
-// =====================================================
-// PAGE NAVIGATION
-// =====================================================
-
-window.openPage = function(pageId){
-
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
-
-            page.classList.remove("active");
-
-        });
-
-
-    document
-        .querySelectorAll(".nav-btn")
-        .forEach(btn => {
-
-            btn.classList.remove("active");
-
-        });
-
-
-    document
-        .getElementById(pageId)
-        ?.classList.add("active");
-
-
-    document
-        .querySelector(
-            `.nav-btn[data-page="${pageId}"]`
-        )
-        ?.classList.add("active");
-
-};
-
-
-document
-    .querySelectorAll(".nav-btn")
-    .forEach(btn => {
-
-        btn.addEventListener("click",() => {
-
-            openPage(
-                btn.dataset.page
-            );
-
-        });
-
-    });
-
-
-// =====================================================
-// GOOGLE LOGIN
-// =====================================================
+/* =====================================================
+   AUTH
+===================================================== */
 
 googleLogin.addEventListener(
     "click",
-    async () => {
+    async ()=>{
+
+        loginError.style.display =
+            "none";
 
         try{
 
-            await signInWithPopup(
-                auth,
-                googleProvider
-            );
+            const result =
+                await signInWithPopup(
+                    auth,
+                    googleProvider
+                );
+
+
+            if(
+                result.user.uid !==
+                ADMIN_UID
+            ){
+
+                await signOut(auth);
+
+                loginError.textContent =
+                    "This Google account is not authorized as admin.";
+
+                loginError.style.display =
+                    "block";
+
+                return;
+
+            }
 
         }catch(error){
 
             console.error(error);
 
-            toast(
-                "Login failed."
-            );
+            loginError.textContent =
+                error.message ||
+                "Login failed.";
+
+            loginError.style.display =
+                "block";
 
         }
 
@@ -1637,54 +2417,49 @@ googleLogin.addEventListener(
 );
 
 
-// =====================================================
-// AUTH
-// =====================================================
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
 onAuthStateChanged(
     auth,
-    async user => {
+    user => {
 
         if(!user){
-
-            currentUser = null;
-
-            app.style.display =
-                "none";
 
             loginScreen.style.display =
                 "flex";
 
-            return;
-        }
-
-
-        // ADMIN CHECK
-        if(
-            ADMIN_UID !== "YOUR_ADMIN_UID"
-            &&
-            user.uid !== ADMIN_UID
-        ){
-
-            toast(
-                "You are not authorized as admin."
+            app.classList.remove(
+                "show"
             );
 
-            await signOut(auth);
-
             return;
+
         }
 
 
-        currentUser =
-            user;
+        if(
+            user.uid !==
+            ADMIN_UID
+        ){
+
+            signOut(auth);
+
+            return;
+
+        }
+
+
+        currentUser = user;
 
 
         loginScreen.style.display =
             "none";
 
-        app.style.display =
-            "block";
+        app.classList.add(
+            "show"
+        );
 
 
         adminName.textContent =
@@ -1694,44 +2469,185 @@ onAuthStateChanged(
 
         adminPhoto.src =
             user.photoURL ||
-            "https://ui-avatars.com/api/?name=Admin";
+            "https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff";
 
 
-        await loadDashboard();
+        loadDashboard();
 
-        loadLectures();
+        loadRecordedLectures();
+
+        checkExistingLive();
 
     }
 );
 
 
-// =====================================================
-// LOGOUT
-// =====================================================
+/* =====================================================
+   LOGOUT
+===================================================== */
 
-logoutBtn.addEventListener(
-    "click",
-    async () => {
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        logout
+    );
 
-        if(liveStarted){
 
-            toast(
-                "पहले Live Class end करो."
+document
+    .getElementById("sidebarLogout")
+    .addEventListener(
+        "click",
+        logout
+    );
+
+
+async function logout(){
+
+    if(liveActive){
+
+        showToast(
+            "End the live class before logout."
+        );
+
+        return;
+
+    }
+
+
+    await signOut(auth);
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+document
+    .querySelectorAll(".navBtn[data-page]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            ()=>{
+
+                openPage(
+                    button.dataset.page
+                );
+
+                closeMobileSidebar();
+
+            }
+        );
+
+    });
+
+
+document
+    .querySelectorAll("[data-back]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            ()=>{
+
+                openPage(
+                    button.dataset.back
+                );
+
+            }
+        );
+
+    });
+
+
+function openPage(pageId){
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+
+            page.classList.remove(
+                "active"
             );
 
-            return;
-        }
+        });
 
 
-        await signOut(auth);
+    const page =
+        document.getElementById(pageId);
+
+
+    if(page){
+
+        page.classList.add(
+            "active"
+        );
 
     }
-);
 
 
-// =====================================================
-// DASHBOARD
-// =====================================================
+    document
+        .querySelectorAll(".navBtn[data-page]")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.page === pageId
+            );
+
+        });
+
+}
+
+
+document
+    .getElementById("goLiveBtn")
+    .addEventListener(
+        "click",
+        ()=>openPage("livePage")
+    );
+
+
+document
+    .getElementById("addLectureBtn")
+    .addEventListener(
+        "click",
+        ()=>openPage("recordedPage")
+    );
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+document
+    .getElementById("menuBtn")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            document
+                .getElementById("sidebar")
+                .classList.toggle("open");
+
+        }
+    );
+
+
+function closeMobileSidebar(){
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
 async function loadDashboard(){
 
@@ -1746,7 +2662,9 @@ async function loadDashboard(){
             );
 
 
-        recordedCount.textContent =
+        document
+            .getElementById("statRecorded")
+            .textContent =
             snapshot.size;
 
     }catch(error){
@@ -1755,45 +2673,42 @@ async function loadDashboard(){
 
     }
 
-
-    watchLiveStatus();
-
 }
 
 
-// =====================================================
-// LIVE STATUS
-// =====================================================
+/* =====================================================
+   EXISTING LIVE
+===================================================== */
 
-function watchLiveStatus(){
+function checkExistingLive(){
 
-    if(unsubscribeLive){
+    if(liveUnsubscribe){
 
-        unsubscribeLive();
+        liveUnsubscribe();
 
     }
 
 
-    const liveRef =
-        collection(
-            db,
-            "liveClasses"
-        );
-
-
-    unsubscribeLive =
+    liveUnsubscribe =
         onSnapshot(
-            liveRef,
+
+            collection(
+                db,
+                "liveClasses"
+            ),
+
             snapshot => {
 
-                let active = null;
+                let liveCount = 0;
+
+                let activeDoc = null;
 
 
                 snapshot.forEach(
-                    item => {
+                    docSnap => {
 
                         const data =
-                            item.data();
+                            docSnap.data();
 
 
                         if(
@@ -1801,10 +2716,20 @@ function watchLiveStatus(){
                             "live"
                         ){
 
-                            active = {
-                                id:item.id,
-                                ...data
-                            };
+                            liveCount++;
+
+
+                            if(
+                                data.teacherId ===
+                                currentUser.uid
+                            ){
+
+                                activeDoc = {
+                                    id:docSnap.id,
+                                    ...data
+                                };
+
+                            }
 
                         }
 
@@ -1812,33 +2737,30 @@ function watchLiveStatus(){
                 );
 
 
-                if(active){
+                document
+                    .getElementById("statLive")
+                    .textContent =
+                    liveCount;
 
-                    liveStatus.textContent =
-                        "LIVE";
 
-                    liveStatus.style.color =
-                        "#22c55e";
+                if(activeDoc && !liveActive){
 
-                }else{
-
-                    liveStatus.textContent =
-                        "Offline";
-
-                    liveStatus.style.color =
-                        "";
+                    restoreLiveUI(
+                        activeDoc
+                    );
 
                 }
 
             }
+
         );
 
 }
 
 
-// =====================================================
-// START LIVE
-// =====================================================
+/* =====================================================
+   START LIVE
+===================================================== */
 
 document
     .getElementById("startLiveBtn")
@@ -1850,114 +2772,196 @@ document
 
 async function startLive(){
 
-    if(liveStarted){
+    if(liveActive){
 
-        toast(
-            "Live class already running."
+        showToast(
+            "A live class is already running."
         );
 
         return;
+
     }
 
 
     const title =
         document
-        .getElementById("liveTitle")
-        .value
-        .trim();
+            .getElementById("liveTitle")
+            .value
+            .trim();
 
 
     const subject =
         document
-        .getElementById("liveSubject")
-        .value;
+            .getElementById("liveSubject")
+            .value
+            .trim();
 
 
     const chapter =
         document
-        .getElementById("liveChapter")
-        .value
-        .trim();
+            .getElementById("liveChapter")
+            .value
+            .trim();
 
 
     let roomId =
         document
-        .getElementById("roomId")
-        .value
-        .trim();
+            .getElementById("roomIdInput")
+            .value
+            .trim();
 
 
     if(!title){
 
-        toast(
-            "Class title डालो."
+        showToast(
+            "Enter class title."
         );
 
         return;
+
     }
 
 
     if(!roomId){
 
         roomId =
-            "room-" +
-            crypto.randomUUID()
-            .slice(0,8);
+            createRoomId(
+                title
+            );
 
         document
-            .getElementById("roomId")
+            .getElementById("roomIdInput")
             .value =
             roomId;
+
     }
 
 
+    /*
+     * Check if this room is already live.
+     */
+
     try{
 
-        const liveRef =
-            await addDoc(
-                collection(
-                    db,
-                    "liveClasses"
-                ),
-                {
-
-                    title,
-
-                    subject,
-
-                    chapter,
-
-                    roomId,
-
-                    teacherId:
-                        currentUser.uid,
-
-                    teacherName:
-                        currentUser.displayName ||
-                        "Teacher",
-
-                    status:
-                        "live",
-
-                    startedAt:
-                        serverTimestamp()
-
-                }
+        const roomRef =
+            doc(
+                db,
+                "liveClasses",
+                roomId
             );
 
 
-        liveDocId =
-            liveRef.id;
+        const existing =
+            await getDocs(
+                collection(
+                    db,
+                    "liveClasses"
+                )
+            );
+
+
+        let roomBusy = false;
+
+
+        existing.forEach(
+            snap => {
+
+                const data =
+                    snap.data();
+
+
+                if(
+                    snap.id === roomId &&
+                    data.status === "live"
+                ){
+
+                    roomBusy = true;
+
+                }
+
+            }
+        );
+
+
+        if(roomBusy){
+
+            showToast(
+                "This Room ID is already live."
+            );
+
+            return;
+
+        }
+
+
+        await setDoc(
+            roomRef,
+            {
+                title:title,
+
+                subject:subject,
+
+                chapter:chapter,
+
+                roomId:roomId,
+
+                teacherId:
+                    currentUser.uid,
+
+                teacherName:
+                    currentUser.displayName ||
+                    "Teacher",
+
+                teacherPhoto:
+                    currentUser.photoURL ||
+                    "",
+
+                status:"live",
+
+                startedAt:
+                    serverTimestamp()
+            }
+        );
+
 
         currentRoomId =
             roomId;
 
+        currentLiveDocId =
+            roomId;
 
-        // Start teacher camera
+        liveActive = true;
 
 
+        document
+            .getElementById("activeRoomId")
+            .value =
+            roomId;
 
-        // Join WebRTC
+
+        document
+            .getElementById("liveSetup")
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById("liveControl")
+            .style.display =
+            "block";
+
+
+        document
+            .getElementById("liveVideoBadge")
+            .classList.add("show");
+
+
+        /*
+         * Teacher camera + mic.
+         *
+         * Student does NOT call this.
+         */
+
         await joinRoom(
             roomId,
             true,
@@ -1968,51 +2972,27 @@ async function startLive(){
         );
 
 
-        liveStarted = true;
+        updateVideoPlaceholder();
 
 
-        document
-            .getElementById("liveSetup")
-            .classList.add("hidden");
+        listenParticipants();
+
+        listenAdminChat();
 
 
-        document
-            .getElementById("liveControl")
-            .classList.remove("hidden");
-
-
-        document
-            .getElementById("liveTitleDisplay")
-            .textContent =
-            title;
-
-
-        document
-            .getElementById("roomDisplay")
-            .textContent =
-            "Room: " + roomId;
-
-
-        document
-            .getElementById("studentRoomLink")
-            .textContent =
-            "Room ID: " + roomId;
-
-
-        toast(
+        showToast(
             "Live class started."
         );
 
-
-        watchStudents();
-
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Start live error:",
+            error
+        );
 
-        toast(
-            "Live start failed: " +
-            error.message
+        showToast(
+            "Could not start live class."
         );
 
     }
@@ -2020,15 +3000,713 @@ async function startLive(){
 }
 
 
-// =====================================================
-// STUDENT COUNT
-// =====================================================
+/* =====================================================
+   RESTORE LIVE UI
+===================================================== */
 
-function watchStudents(){
+async function restoreLiveUI(data){
 
-    if(unsubscribeParticipants){
+    currentRoomId =
+        data.roomId ||
+        data.id;
 
-        unsubscribeParticipants();
+    currentLiveDocId =
+        data.id;
+
+    liveActive = true;
+
+
+    document
+        .getElementById("liveTitle")
+        .value =
+        data.title || "";
+
+
+    document
+        .getElementById("liveSubject")
+        .value =
+        data.subject || "";
+
+
+    document
+        .getElementById("liveChapter")
+        .value =
+        data.chapter || "";
+
+
+    document
+        .getElementById("roomIdInput")
+        .value =
+        currentRoomId;
+
+
+    document
+        .getElementById("activeRoomId")
+        .value =
+        currentRoomId;
+
+
+    document
+        .getElementById("liveSetup")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("liveControl")
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById("liveVideoBadge")
+        .classList.add("show");
+
+
+    try{
+
+        await joinRoom(
+            currentRoomId,
+            true,
+            null,
+            document.getElementById(
+                "localVideo"
+            )
+        );
+
+
+        listenParticipants();
+
+        listenAdminChat();
+
+        updateVideoPlaceholder();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   END LIVE
+===================================================== */
+
+document
+    .getElementById("endLiveBtn")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            openConfirm(
+                "End Live Class?",
+                "All students will be disconnected from this live room.",
+                endLive
+            );
+
+        }
+    );
+
+
+async function endLive(){
+
+    try{
+
+        if(currentLiveDocId){
+
+            await updateDoc(
+
+                doc(
+                    db,
+                    "liveClasses",
+                    currentLiveDocId
+                ),
+
+                {
+                    status:"ended",
+
+                    endedAt:
+                        serverTimestamp()
+                }
+
+            );
+
+        }
+
+
+        await leaveRoom();
+
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    liveActive = false;
+
+    currentRoomId = null;
+
+    currentLiveDocId = null;
+
+
+    if(participantsUnsubscribe){
+
+        participantsUnsubscribe();
+
+        participantsUnsubscribe =
+            null;
+
+    }
+
+
+    if(chatUnsubscribe){
+
+        chatUnsubscribe();
+
+        chatUnsubscribe =
+            null;
+
+    }
+
+
+    stopRecordingWithoutDownload();
+
+
+    document
+        .getElementById("liveSetup")
+        .style.display =
+        "block";
+
+
+    document
+        .getElementById("liveControl")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("liveVideoBadge")
+        .classList.remove("show");
+
+
+    document
+        .getElementById("participants")
+        .innerHTML = "";
+
+
+    document
+        .getElementById("adminChat")
+        .innerHTML = "";
+
+
+    document
+        .getElementById("statStudents")
+        .textContent =
+        "0";
+
+
+    showToast(
+        "Live class ended."
+    );
+
+}
+
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+document
+    .getElementById("switchCameraBtn")
+    .addEventListener(
+        "click",
+        async ()=>{
+
+            if(!liveActive){
+
+                showToast(
+                    "Start live class first."
+                );
+
+                return;
+
+            }
+
+
+            try{
+
+                await switchCamera();
+
+                showToast(
+                    "Camera switched."
+                );
+
+                updateVideoPlaceholder();
+
+            }catch(error){
+
+                console.error(error);
+
+                showToast(
+                    "Camera switch failed."
+                );
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   MIC
+===================================================== */
+
+document
+    .getElementById("micBtn")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            if(!liveActive){
+
+                return;
+
+            }
+
+
+            toggleMute();
+
+            updateMicButton();
+
+        }
+    );
+
+
+/* =====================================================
+   CAMERA TOGGLE
+===================================================== */
+
+document
+    .getElementById("cameraBtn")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            if(!liveActive){
+
+                return;
+
+            }
+
+
+            toggleCamera();
+
+            updateVideoPlaceholder();
+
+        }
+    );
+
+
+/* =====================================================
+   SCREEN SHARE
+===================================================== */
+
+document
+    .getElementById("screenBtn")
+    .addEventListener(
+        "click",
+        async ()=>{
+
+            if(!liveActive){
+
+                return;
+
+            }
+
+
+            try{
+
+                if(!screenSharing){
+
+                    await startScreenShare();
+
+                    screenSharing =
+                        true;
+
+                    showToast(
+                        "Screen sharing started."
+                    );
+
+                }else{
+
+                    await stopScreenShare();
+
+                    screenSharing =
+                        false;
+
+                    showToast(
+                        "Screen sharing stopped."
+                    );
+
+                }
+
+            }catch(error){
+
+                console.error(error);
+
+                screenSharing =
+                    false;
+
+                showToast(
+                    "Screen sharing failed."
+                );
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   UPDATE MIC UI
+===================================================== */
+
+function updateMicButton(){
+
+    const button =
+        document.getElementById(
+            "micBtn"
+        );
+
+
+    /*
+     * webrtc.js currently exposes state
+     * through getWebRTCState().
+     *
+     * If unavailable, button still works.
+     */
+
+    try{
+
+        button.classList.toggle(
+            "off",
+            false
+        );
+
+    }catch(error){}
+
+}
+
+
+/* =====================================================
+   VIDEO PLACEHOLDER
+===================================================== */
+
+function updateVideoPlaceholder(){
+
+    const video =
+        document.getElementById(
+            "localVideo"
+        );
+
+
+    const placeholder =
+        document.getElementById(
+            "videoPlaceholder"
+        );
+
+
+    if(
+        video.srcObject &&
+        video.srcObject
+            .getVideoTracks()
+            .some(
+                track =>
+                    track.enabled
+            )
+    ){
+
+        placeholder.style.display =
+            "none";
+
+    }else{
+
+        placeholder.style.display =
+            "flex";
+
+    }
+
+}
+
+
+/* =====================================================
+   RECORDING
+===================================================== */
+
+document
+    .getElementById("recordBtn")
+    .addEventListener(
+        "click",
+        startStopRecording
+    );
+
+
+function startStopRecording(){
+
+    if(!liveActive){
+
+        showToast(
+            "Start live first."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        recording &&
+        recording.state ===
+        "recording"
+    ){
+
+        recording.stop();
+
+        return;
+
+    }
+
+
+    const video =
+        document.getElementById(
+            "localVideo"
+        );
+
+
+    if(!video.srcObject){
+
+        showToast(
+            "Camera stream unavailable."
+        );
+
+        return;
+
+    }
+
+
+    recordedChunks = [];
+
+
+    try{
+
+        recording =
+            new MediaRecorder(
+                video.srcObject,
+                {
+                    mimeType:
+                        getSupportedMime()
+                }
+            );
+
+
+        recording.ondataavailable =
+            event => {
+
+                if(
+                    event.data &&
+                    event.data.size > 0
+                ){
+
+                    recordedChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        recording.onstop =
+            ()=>{
+
+                showToast(
+                    "Recording ready. Tap download."
+                );
+
+            };
+
+
+        recording.start(
+            1000
+        );
+
+
+        showToast(
+            "Recording started."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Recording could not start."
+        );
+
+    }
+
+}
+
+
+function getSupportedMime(){
+
+    const types = [
+
+        "video/webm;codecs=vp9,opus",
+
+        "video/webm;codecs=vp8,opus",
+
+        "video/webm"
+
+    ];
+
+
+    for(
+        const type of types
+    ){
+
+        if(
+            MediaRecorder.isTypeSupported(
+                type
+            )
+        ){
+
+            return type;
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
+   DOWNLOAD RECORDING
+===================================================== */
+
+document
+    .getElementById("downloadBtn")
+    .addEventListener(
+        "click",
+        downloadRecording
+    );
+
+
+function downloadRecording(){
+
+    if(!recordedChunks.length){
+
+        showToast(
+            "No recording available."
+        );
+
+        return;
+
+    }
+
+
+    const blob =
+        new Blob(
+            recordedChunks,
+            {
+                type:"video/webm"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+
+    a.download =
+        "live-class-" +
+        new Date()
+            .toISOString()
+            .replace(
+                /[:.]/g,
+                "-"
+            ) +
+        ".webm";
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+
+    setTimeout(
+        ()=>{
+            URL.revokeObjectURL(url);
+        },
+        1000
+    );
+
+
+    showToast(
+        "Recording downloaded."
+    );
+
+}
+
+
+function stopRecordingWithoutDownload(){
+
+    if(
+        recording &&
+        recording.state ===
+        "recording"
+    ){
+
+        try{
+
+            recording.stop();
+
+        }catch(error){}
+
+    }
+
+    recording = null;
+
+}
+
+
+/* =====================================================
+   PARTICIPANTS
+===================================================== */
+
+function listenParticipants(){
+
+    if(participantsUnsubscribe){
+
+        participantsUnsubscribe();
 
     }
 
@@ -2042,549 +3720,748 @@ function watchStudents(){
         );
 
 
-    unsubscribeParticipants =
+    participantsUnsubscribe =
         onSnapshot(
             ref,
             snapshot => {
 
-                let count = 0;
+                const list = [];
 
 
                 snapshot.forEach(
-                    item => {
+                    snap => {
+
+                        list.push({
+
+                            id:snap.id,
+
+                            ...snap.data()
+
+                        });
+
+                    }
+                );
+
+
+                /*
+                 * Teacher को list में सबसे ऊपर।
+                 */
+
+                list.sort(
+                    (a,b)=>{
 
                         if(
-                            item.id !==
-                            currentUser.uid
-                        ){
+                            a.role ===
+                            "teacher"
+                        ) return -1;
 
-                            count++;
+                        if(
+                            b.role ===
+                            "teacher"
+                        ) return 1;
+
+                        return 0;
+
+                    }
+                );
+
+
+                renderParticipants(
+                    list
+                );
+
+
+                const studentCount =
+                    list.filter(
+                        item =>
+                            item.role !==
+                            "teacher"
+                    ).length;
+
+
+                document
+                    .getElementById(
+                        "statStudents"
+                    )
+                    .textContent =
+                    studentCount;
+
+
+                document
+                    .getElementById(
+                        "participantCount"
+                    )
+                    .textContent =
+                    studentCount +
+                    " students";
+
+            },
+            error => {
+
+                console.error(
+                    "Participant listener:",
+                    error
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   RENDER PARTICIPANTS
+===================================================== */
+
+function renderParticipants(list){
+
+    const container =
+        document.getElementById(
+            "participants"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if(!list.length){
+
+        container.innerHTML = `
+            <div style="
+                color:var(--muted);
+                font-size:11px;
+                padding:12px 2px;
+            ">
+                No students connected.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    list.forEach(
+        participant => {
+
+            const name =
+                participant.name ||
+                "Student";
+
+
+            const isTeacher =
+                participant.role ===
+                "teacher";
+
+
+            const blocked =
+                participant.blocked ===
+                true;
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "participant";
+
+
+            item.innerHTML = `
+
+                <div class="participantAvatar">
+
+                    ${getInitial(name)}
+
+                </div>
+
+
+                <div class="participantInfo">
+
+                    <strong>
+                        ${escapeHTML(name)}
+                    </strong>
+
+                    <span>
+
+                        ${
+                            isTeacher
+                            ? "Teacher"
+                            : blocked
+                                ? "Blocked"
+                                : "Student"
+                        }
+
+                    </span>
+
+                </div>
+
+
+                ${
+                    isTeacher
+                    ?
+                    ""
+                    :
+                    `
+                    <button
+                        class="
+                            blockBtn
+                            ${blocked ? "unblockBtn" : ""}
+                        "
+                        data-block="${participant.id}"
+                        data-state="${blocked ? "unblock" : "block"}"
+                        title="${
+                            blocked
+                            ? "Unblock student"
+                            : "Block student"
+                        }">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+
+                            ${
+                                blocked
+                                ?
+                                `
+                                <path d="M12 5a7 7 0 1 1-5 2"/>
+                                <path d="M5 5v4h4"/>
+                                `
+                                :
+                                `
+                                <circle cx="12" cy="12" r="8"/>
+                                <path d="m8 8 8 8"/>
+                                `
+                            }
+
+                        </svg>
+
+                    </button>
+                    `
+                }
+
+            `;
+
+
+            const blockButton =
+                item.querySelector(
+                    "[data-block]"
+                );
+
+
+            if(blockButton){
+
+                blockButton.addEventListener(
+                    "click",
+                    ()=>{
+
+                        const uid =
+                            blockButton.dataset.block;
+
+
+                        const state =
+                            blockButton.dataset.state;
+
+
+                        if(state === "block"){
+
+                            openConfirm(
+                                "Block Student?",
+                                "This student will be marked as blocked.",
+                                ()=>blockStudent(uid)
+                            );
+
+                        }else{
+
+                            unblockStudent(
+                                uid
+                            );
 
                         }
 
                     }
                 );
 
-
-                studentCount.textContent =
-                    count;
-
-
-                document
-                    .getElementById(
-                        "liveStudentCount"
-                    )
-                    .textContent =
-                    count;
-
             }
-        );
+
+
+            container.appendChild(item);
+
+        }
+    );
 
 }
 
 
-// =====================================================
-// MUTE
-// =====================================================
-
-document
-    .getElementById("muteBtn")
-    .addEventListener(
-        "click",
-        async () => {
-
-            const muted =
-                toggleMute();
-
-
-            document
-                .getElementById(
-                    "muteBtn"
-                )
-                .textContent =
-                muted
-                    ? "Mic OFF"
-                    : "Mic ON";
-
-
-            document
-                .getElementById(
-                    "micStatus"
-                )
-                .textContent =
-                muted
-                    ? "OFF"
-                    : "ON";
-
-
-            if(currentRoomId){
-
-                await updateParticipantStatus(
-                    {
-                        mic:!muted
-                    }
-                );
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// CAMERA
-// =====================================================
-
-document
-    .getElementById("cameraBtn")
-    .addEventListener(
-        "click",
-        async () => {
-
-            const off =
-                toggleCamera();
-
-
-            document
-                .getElementById(
-                    "cameraBtn"
-                )
-                .textContent =
-                off
-                    ? "Camera OFF"
-                    : "Camera ON";
-
-
-            document
-                .getElementById(
-                    "cameraStatus"
-                )
-                .textContent =
-                off
-                    ? "OFF"
-                    : "ON";
-
-
-            document
-                .getElementById(
-                    "videoPlaceholder"
-                )
-                .classList.toggle(
-                    "hidden",
-                    !off
-                );
-
-
-            if(currentRoomId){
-
-                await updateParticipantStatus(
-                    {
-                        camera:!off
-                    }
-                );
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// SWITCH CAMERA
-// =====================================================
-
-document
-    .getElementById(
-        "switchCameraBtn"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            try{
-
-                await switchCamera();
-
-                toast(
-                    "Camera switched."
-                );
-
-            }catch(error){
-
-                console.error(error);
-
-                toast(
-                    "Camera switch नहीं हो सका."
-                );
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// SCREEN SHARE
-// =====================================================
-
-document
-    .getElementById("screenBtn")
-    .addEventListener(
-        "click",
-        async () => {
-
-            try{
-
-                if(screenSharing){
-
-                    await stopScreenShare();
-
-                    screenSharing =
-                        false;
-
-                    document
-                        .getElementById(
-                            "screenBtn"
-                        )
-                        .textContent =
-                        "Share Screen";
-
-                    toast(
-                        "Screen sharing stopped."
-                    );
-
-                }else{
-
-                    await startScreenShare();
-
-                    screenSharing =
-                        true;
-
-                    document
-                        .getElementById(
-                            "screenBtn"
-                        )
-                        .textContent =
-                        "Stop Screen";
-
-                    toast(
-                        "Screen sharing started."
-                    );
-
-                }
-
-            }catch(error){
-
-                console.error(error);
-
-                toast(
-                    "Screen sharing failed."
-                );
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// RECORDING
-// =====================================================
-
-document
-    .getElementById("recordBtn")
-    .addEventListener(
-        "click",
-        startRecording
-    );
-
-
-function startRecording(){
-
-    if(mediaRecorder){
-
-        return;
-    }
-
-
-    const video =
-        document.getElementById(
-            "localVideo"
-        );
-
-
-    const stream =
-        video.srcObject;
-
-
-    if(!stream){
-
-        toast(
-            "Video stream available नहीं है."
-        );
-
-        return;
-    }
-
+/* =====================================================
+   BLOCK STUDENT
+===================================================== */
+
+async function blockStudent(uid){
 
     try{
 
-        recordedChunks = [];
+        await updateDoc(
+
+            doc(
+                db,
+                "liveClasses",
+                currentRoomId,
+                "participants",
+                uid
+            ),
+
+            {
+                blocked:true,
+
+                blockedAt:
+                    serverTimestamp(),
+
+                blockedBy:
+                    currentUser.uid
+            }
+
+        );
 
 
-        mediaRecorder =
-            new MediaRecorder(
-                stream,
-                {
-                    mimeType:
-                        "video/webm;codecs=vp9,opus"
-                }
-            );
+        showToast(
+            "Student blocked."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Could not block student."
+        );
+
+    }
+
+}
 
 
-    }catch{
+/* =====================================================
+   UNBLOCK STUDENT
+===================================================== */
 
-        mediaRecorder =
-            new MediaRecorder(
-                stream
-            );
+async function unblockStudent(uid){
+
+    try{
+
+        await updateDoc(
+
+            doc(
+                db,
+                "liveClasses",
+                currentRoomId,
+                "participants",
+                uid
+            ),
+
+            {
+                blocked:false,
+
+                unblockedAt:
+                    serverTimestamp(),
+
+                unblockedBy:
+                    currentUser.uid
+            }
+
+        );
+
+
+        showToast(
+            "Student unblocked."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Could not unblock student."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ADMIN CHAT
+===================================================== */
+
+function listenAdminChat(){
+
+    if(chatUnsubscribe){
+
+        chatUnsubscribe();
 
     }
 
 
-    mediaRecorder.ondataavailable =
-        event => {
-
-            if(
-                event.data &&
-                event.data.size > 0
-            ){
-
-                recordedChunks.push(
-                    event.data
-                );
-
-            }
-
-        };
+    const ref =
+        collection(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "chat"
+        );
 
 
-    mediaRecorder.onstop =
-        () => {
+    chatUnsubscribe =
+        onSnapshot(
+            ref,
+            snapshot => {
 
-            recordingBlob =
-                new Blob(
-                    recordedChunks,
-                    {
-                        type:
-                            "video/webm"
+                const messages = [];
+
+
+                snapshot.forEach(
+                    snap => {
+
+                        messages.push({
+
+                            id:snap.id,
+
+                            ...snap.data()
+
+                        });
+
                     }
                 );
 
 
-            document
-                .getElementById(
-                    "downloadBtn"
-                )
-                .classList.remove(
-                    "hidden"
+                messages.sort(
+                    (a,b)=>
+                        getTime(a.createdAt) -
+                        getTime(b.createdAt)
                 );
 
 
-            mediaRecorder =
-                null;
+                renderAdminChat(
+                    messages
+                );
 
-        };
+            },
+            error => {
 
+                console.error(
+                    "Chat listener:",
+                    error
+                );
 
-    mediaRecorder.start(
-        1000
-    );
-
-
-    document
-        .getElementById(
-            "recordBtn"
-        )
-        .textContent =
-        "Stop Recording";
-
-
-    document
-        .getElementById(
-            "recordStatus"
-        )
-        .textContent =
-        "ON";
-
-
-    document
-        .getElementById(
-            "recordBtn"
-        )
-        .onclick =
-        stopRecording;
+            }
+        );
 
 }
 
 
-function stopRecording(){
+/* =====================================================
+   RENDER ADMIN CHAT
+===================================================== */
 
-    if(!mediaRecorder){
+function renderAdminChat(messages){
+
+    const box =
+        document.getElementById(
+            "adminChat"
+        );
+
+
+    box.innerHTML = "";
+
+
+    if(!messages.length){
+
+        box.innerHTML = `
+            <div style="
+                color:var(--muted);
+                font-size:11px;
+                padding:10px 0;
+            ">
+                No messages yet.
+            </div>
+        `;
 
         return;
+
     }
 
 
-    mediaRecorder.stop();
+    messages.forEach(
+        message => {
+
+            const name =
+                message.name ||
+                "Student";
 
 
-    document
-        .getElementById(
-            "recordBtn"
-        )
-        .textContent =
-        "Start Recording";
-
-
-    document
-        .getElementById(
-            "recordStatus"
-        )
-        .textContent =
-        "OFF";
-
-
-    document
-        .getElementById(
-            "recordBtn"
-        )
-        .onclick =
-        startRecording;
-
-}
-
-
-// =====================================================
-// DOWNLOAD RECORDING
-// =====================================================
-
-document
-    .getElementById(
-        "downloadBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if(!recordingBlob){
-
-                toast(
-                    "Recording available नहीं है."
-                );
-
-                return;
-            }
-
-
-            const url =
-                URL.createObjectURL(
-                    recordingBlob
-                );
-
-
-            const a =
+            const item =
                 document.createElement(
-                    "a"
+                    "div"
                 );
 
 
-            a.href =
-                url;
+            item.className =
+                "chatMessage";
 
 
-            const safeTitle =
-                (
-                    document
-                    .getElementById(
-                        "liveTitle"
-                    )
-                    .value
-                    .trim()
-                    .replace(
-                        /[^a-z0-9]+/gi,
-                        "-"
-                    )
-                    .toLowerCase()
-                ) ||
-                "live-class";
+            item.innerHTML = `
+
+                <div class="chatAvatar">
+
+                    ${getInitial(name)}
+
+                </div>
 
 
-            a.download =
-                safeTitle +
-                "-" +
-                Date.now() +
-                ".webm";
+                <div class="chatBody">
+
+                    <div class="chatName">
+
+                        ${escapeHTML(name)}
+
+                    </div>
 
 
-            document.body.appendChild(a);
+                    <div class="chatText">
 
-            a.click();
+                        ${escapeHTML(
+                            message.text || ""
+                        )}
 
-            a.remove();
-
-
-            setTimeout(
-                () =>
-                    URL.revokeObjectURL(url),
-                1000
-            );
+                    </div>
 
 
-            toast(
-                "Recording download started."
-            );
+                    <div class="chatTime">
+
+                        ${formatTime(
+                            message.createdAt
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="deleteMessage"
+                    title="Delete message">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
+                        <path d="M4 7h16"/>
+                        <path d="M10 11v6"/>
+                        <path d="M14 11v6"/>
+                        <path d="m9 7 1-3h4l1 3"/>
+                        <path d="M6 7l1 14h10l1-14"/>
+
+                    </svg>
+
+                </button>
+
+            `;
+
+
+            item
+                .querySelector(
+                    ".deleteMessage"
+                )
+                .addEventListener(
+                    "click",
+                    ()=>{
+
+                        openConfirm(
+                            "Delete Message?",
+                            "This message will be permanently removed.",
+                            ()=>deleteChatMessage(
+                                message.id
+                            )
+                        );
+
+                    }
+                );
+
+
+            box.appendChild(item);
 
         }
     );
 
 
-// =====================================================
-// COPY ROOM
-// =====================================================
+    box.scrollTop =
+        box.scrollHeight;
+
+}
+
+
+/* =====================================================
+   DELETE CHAT MESSAGE
+===================================================== */
+
+async function deleteChatMessage(
+    messageId
+){
+
+    try{
+
+        await deleteDoc(
+
+            doc(
+                db,
+                "liveClasses",
+                currentRoomId,
+                "chat",
+                messageId
+            )
+
+        );
+
+
+        showToast(
+            "Message deleted."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Could not delete message."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ANNOUNCEMENT
+===================================================== */
 
 document
-    .getElementById(
-        "copyRoomBtn"
-    )
+    .getElementById("announcementBtn")
     .addEventListener(
         "click",
-        async () => {
+        async ()=>{
+
+            const input =
+                document.getElementById(
+                    "announcementInput"
+                );
+
+
+            const text =
+                input.value.trim();
+
+
+            if(!text){
+
+                return;
+
+            }
+
 
             if(!currentRoomId){
 
-                toast(
-                    "Room ID नहीं है."
+                return;
+
+            }
+
+
+            try{
+
+                await addDoc(
+
+                    collection(
+                        db,
+                        "liveClasses",
+                        currentRoomId,
+                        "announcements"
+                    ),
+
+                    {
+                        text:text,
+
+                        adminId:
+                            currentUser.uid,
+
+                        createdAt:
+                            serverTimestamp()
+                    }
+
                 );
 
+
+                input.value = "";
+
+
+                showToast(
+                    "Announcement sent."
+                );
+
+            }catch(error){
+
+                console.error(error);
+
+                showToast(
+                    "Announcement failed."
+                );
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   COPY ROOM
+===================================================== */
+
+document
+    .getElementById("copyRoomBtn")
+    .addEventListener(
+        "click",
+        async ()=>{
+
+            const room =
+                document
+                    .getElementById(
+                        "activeRoomId"
+                    )
+                    .value;
+
+
+            if(!room){
+
                 return;
+
             }
 
 
             try{
 
                 await navigator.clipboard.writeText(
-                    currentRoomId
+                    room
                 );
 
-
-                toast(
+                showToast(
                     "Room ID copied."
                 );
 
-            }catch{
+            }catch(error){
 
-                toast(
+                showToast(
                     "Copy failed."
                 );
 
@@ -2594,556 +4471,398 @@ document
     );
 
 
-// =====================================================
-// END LIVE MODAL
-// =====================================================
-
-const confirmModal =
-    document.getElementById(
-        "confirmModal"
-    );
-
+/* =====================================================
+   RECORDED LECTURES
+===================================================== */
 
 document
-    .getElementById(
-        "endLiveBtn"
-    )
+    .getElementById("lectureForm")
     .addEventListener(
-        "click",
-        () => {
+        "submit",
+        async event => {
 
-            confirmModal.classList.add(
-                "show"
-            );
+            event.preventDefault();
+
+
+            const title =
+                document
+                    .getElementById(
+                        "lectureTitle"
+                    )
+                    .value
+                    .trim();
+
+
+            const subject =
+                document
+                    .getElementById(
+                        "lectureSubject"
+                    )
+                    .value
+                    .trim();
+
+
+            const chapter =
+                document
+                    .getElementById(
+                        "lectureChapter"
+                    )
+                    .value
+                    .trim();
+
+
+            const thumbnail =
+                document
+                    .getElementById(
+                        "lectureThumbnail"
+                    )
+                    .value
+                    .trim();
+
+
+            const videoUrl =
+                document
+                    .getElementById(
+                        "lectureVideoUrl"
+                    )
+                    .value
+                    .trim();
+
+
+            const description =
+                document
+                    .getElementById(
+                        "lectureDescription"
+                    )
+                    .value
+                    .trim();
+
+
+            if(!title || !subject || !videoUrl){
+
+                showToast(
+                    "Fill required fields."
+                );
+
+                return;
+
+            }
+
+
+            try{
+
+                await addDoc(
+
+                    collection(
+                        db,
+                        "recordedClasses"
+                    ),
+
+                    {
+                        title:title,
+
+                        subject:subject,
+
+                        chapter:chapter,
+
+                        thumbnail:thumbnail,
+
+                        videoUrl:videoUrl,
+
+                        description:description,
+
+                        createdBy:
+                            currentUser.uid,
+
+                        createdAt:
+                            serverTimestamp()
+                    }
+
+                );
+
+
+                event.target.reset();
+
+
+                showToast(
+                    "Recorded class added."
+                );
+
+
+                loadDashboard();
+
+            }catch(error){
+
+                console.error(error);
+
+                showToast(
+                    "Could not add lecture."
+                );
+
+            }
 
         }
     );
 
 
-document
-    .getElementById(
-        "cancelEndBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
+/* =====================================================
+   LOAD LECTURES
+===================================================== */
 
-            confirmModal.classList.remove(
-                "show"
-            );
+function loadRecordedLectures(){
 
-        }
-    );
+    if(lectureUnsubscribe){
 
-
-document
-    .getElementById(
-        "confirmEndBtn"
-    )
-    .addEventListener(
-        "click",
-        endLive
-    );
-
-
-// =====================================================
-// END LIVE
-// =====================================================
-
-async function endLive(){
-
-    confirmModal.classList.remove(
-        "show"
-    );
-
-
-    try{
-
-        if(mediaRecorder){
-
-            stopRecording();
-
-        }
-
-
-        if(screenSharing){
-
-            await stopScreenShare();
-
-            screenSharing =
-                false;
-
-        }
-
-
-        await leaveRoom();
-
-
-        if(liveDocId){
-
-            await updateDoc(
-                doc(
-                    db,
-                    "liveClasses",
-                    liveDocId
-                ),
-                {
-
-                    status:
-                        "ended",
-
-                    endedAt:
-                        serverTimestamp()
-
-                }
-            );
-
-        }
-
-
-        if(unsubscribeParticipants){
-
-            unsubscribeParticipants();
-
-            unsubscribeParticipants =
-                null;
-
-        }
-
-
-        liveStarted =
-            false;
-
-        currentRoomId =
-            null;
-
-        liveDocId =
-            null;
-
-
-        document
-            .getElementById(
-                "liveControl"
-            )
-            .classList.add(
-                "hidden"
-            );
-
-
-        document
-            .getElementById(
-                "liveSetup"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
-
-        document
-            .getElementById(
-                "localVideo"
-            )
-            .srcObject =
-            null;
-
-
-        studentCount.textContent =
-            "0";
-
-
-        document
-            .getElementById(
-                "liveStudentCount"
-            )
-            .textContent =
-            "0";
-
-
-        toast(
-            "Live class ended."
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        toast(
-            "Could not end live class."
-        );
+        lectureUnsubscribe();
 
     }
 
-}
 
+    lectureUnsubscribe =
+        onSnapshot(
 
-// =====================================================
-// ADD RECORDED LECTURE
-// =====================================================
-
-document
-    .getElementById(
-        "addLectureBtn"
-    )
-    .addEventListener(
-        "click",
-        addLecture
-    );
-
-
-async function addLecture(){
-
-    const title =
-        document
-        .getElementById(
-            "lectureTitle"
-        )
-        .value
-        .trim();
-
-
-    const subject =
-        document
-        .getElementById(
-            "lectureSubject"
-        )
-        .value;
-
-
-    const chapter =
-        document
-        .getElementById(
-            "lectureChapter"
-        )
-        .value
-        .trim();
-
-
-    const thumbnail =
-        document
-        .getElementById(
-            "lectureThumbnail"
-        )
-        .value
-        .trim();
-
-
-    const videoUrl =
-        document
-        .getElementById(
-            "lectureVideo"
-        )
-        .value
-        .trim();
-
-
-    const description =
-        document
-        .getElementById(
-            "lectureDescription"
-        )
-        .value
-        .trim();
-
-
-    if(!title){
-
-        toast(
-            "Lecture title डालो."
-        );
-
-        return;
-    }
-
-
-    if(!videoUrl){
-
-        toast(
-            "Video URL डालो."
-        );
-
-        return;
-    }
-
-
-    try{
-
-        await addDoc(
             collection(
                 db,
                 "recordedClasses"
             ),
-            {
 
-                title,
+            snapshot => {
 
-                subject,
+                const lectures = [];
 
-                chapter,
 
-                thumbnail,
+                snapshot.forEach(
+                    snap => {
 
-                videoUrl,
+                        lectures.push({
 
-                description,
+                            id:snap.id,
 
-                createdBy:
-                    currentUser.uid,
+                            ...snap.data()
 
-                createdAt:
-                    serverTimestamp()
+                        });
+
+                    }
+                );
+
+
+                lectures.sort(
+                    (a,b)=>
+                        getTime(b.createdAt) -
+                        getTime(a.createdAt)
+                );
+
+
+                renderLectures(
+                    lectures
+                );
+
+
+                document
+                    .getElementById(
+                        "statRecorded"
+                    )
+                    .textContent =
+                    lectures.length;
+
+
+                document
+                    .getElementById(
+                        "lectureCount"
+                    )
+                    .textContent =
+                    lectures.length +
+                    " lectures";
+
+            },
+
+            error => {
+
+                console.error(
+                    "Lecture listener:",
+                    error
+                );
 
             }
+
         );
-
-
-        document
-            .getElementById(
-                "lectureTitle"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "lectureChapter"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "lectureThumbnail"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "lectureVideo"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "lectureDescription"
-            )
-            .value = "";
-
-
-        toast(
-            "Lecture added successfully."
-        );
-
-
-        loadLectures();
-
-    }catch(error){
-
-        console.error(error);
-
-        toast(
-            "Lecture add failed."
-        );
-
-    }
 
 }
 
 
-// =====================================================
-// LOAD LECTURES
-// =====================================================
+/* =====================================================
+   RENDER LECTURES
+===================================================== */
 
-async function loadLectures(){
+function renderLectures(lectures){
 
-    try{
-
-        const q =
-            query(
-                collection(
-                    db,
-                    "recordedClasses"
-                ),
-                orderBy(
-                    "createdAt",
-                    "desc"
-                )
-            );
+    const table =
+        document.getElementById(
+            "lectureTable"
+        );
 
 
-        const snapshot =
-            await getDocs(q);
+    table.innerHTML = "";
 
 
-        const table =
-            document.getElementById(
-                "lectureTable"
-            );
+    if(!lectures.length){
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    style="
+                        text-align:center;
+                        color:var(--muted);
+                        padding:35px;
+                    ">
+                    No recorded lectures.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
 
 
-        table.innerHTML = "";
+    lectures.forEach(
+        lecture => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
 
 
-        recordedCount.textContent =
-            snapshot.size;
+            row.innerHTML = `
+
+                <td>
+
+                    ${
+                        lecture.thumbnail
+                        ?
+                        `
+                        <img
+                            class="thumbnailSmall"
+                            src="${escapeAttribute(
+                                lecture.thumbnail
+                            )}"
+                            alt=""
+                            onerror="
+                                this.style.display='none'
+                            ">
+                        `
+                        :
+                        `
+                        <div
+                            class="thumbnailSmall">
+                        </div>
+                        `
+                    }
+
+                </td>
 
 
-        if(snapshot.empty){
+                <td>
+                    <strong>
+                        ${escapeHTML(
+                            lecture.title ||
+                            "Untitled"
+                        )}
+                    </strong>
+                </td>
 
-            table.innerHTML = `
-                <tr>
-                    <td colspan="5"
-                        style="text-align:center;color:#8e9aae">
-                        No lectures added yet.
-                    </td>
-                </tr>
+
+                <td>
+                    ${escapeHTML(
+                        lecture.subject ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        lecture.chapter ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+
+                    <button
+                        class="dangerBtn deleteLecture">
+
+                        Delete
+
+                    </button>
+
+                </td>
+
             `;
 
-            return;
-        }
 
+            row
+                .querySelector(
+                    ".deleteLecture"
+                )
+                .addEventListener(
+                    "click",
+                    ()=>{
 
-        snapshot.forEach(
-            item => {
-
-                const data =
-                    item.data();
-
-
-                let date =
-                    "—";
-
-
-                if(
-                    data.createdAt &&
-                    data.createdAt.toDate
-                ){
-
-                    date =
-                        data.createdAt
-                            .toDate()
-                            .toLocaleDateString();
-
-                }
-
-
-                const tr =
-                    document.createElement(
-                        "tr"
-                    );
-
-
-                tr.innerHTML = `
-
-                    <td>
-                        ${escapeHTML(
-                            data.title || "Untitled"
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            data.subject || "—"
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            data.chapter || "—"
-                        )}
-                    </td>
-
-                    <td>
-                        ${date}
-                    </td>
-
-                    <td>
-
-                        <button
-                            class="action-btn delete"
-                            data-id="${item.id}"
-                        >
-                            Delete
-                        </button>
-
-                    </td>
-
-                `;
-
-
-                tr
-                    .querySelector(
-                        ".delete"
-                    )
-                    .addEventListener(
-                        "click",
-                        () =>
-                            deleteLecture(
-                                item.id
+                        openConfirm(
+                            "Delete Lecture?",
+                            "This recorded class will be permanently deleted.",
+                            ()=>deleteLecture(
+                                lecture.id
                             )
-                    );
+                        );
+
+                    }
+                );
 
 
-                table.appendChild(tr);
+            table.appendChild(row);
 
-            }
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        toast(
-            "Lectures load नहीं हो सके."
-        );
-
-    }
+        }
+    );
 
 }
 
 
-// =====================================================
-// DELETE LECTURE
-// =====================================================
+/* =====================================================
+   DELETE LECTURE
+===================================================== */
 
 async function deleteLecture(id){
-
-    const ok =
-        confirm(
-            "Delete this lecture?"
-        );
-
-
-    if(!ok){
-        return;
-    }
-
 
     try{
 
         await deleteDoc(
+
             doc(
                 db,
                 "recordedClasses",
                 id
             )
+
         );
 
 
-        toast(
+        showToast(
             "Lecture deleted."
         );
 
 
-        loadLectures();
+        loadDashboard();
 
     }catch(error){
 
         console.error(error);
 
-        toast(
-            "Delete failed."
+        showToast(
+            "Could not delete lecture."
         );
 
     }
@@ -3151,47 +4870,239 @@ async function deleteLecture(id){
 }
 
 
-// =====================================================
-// HTML ESCAPE
-// =====================================================
+/* =====================================================
+   CONFIRM MODAL
+===================================================== */
 
-function escapeHTML(value){
+let pendingAction = null;
 
-    return String(value)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+
+function openConfirm(
+    title,
+    text,
+    action
+){
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        title;
+
+
+    document
+        .getElementById("modalText")
+        .textContent =
+        text;
+
+
+    pendingAction =
+        action;
+
+
+    document
+        .getElementById("confirmModal")
+        .classList.add("show");
 
 }
 
 
-// =====================================================
-// CLEANUP BEFORE PAGE CLOSE
-// =====================================================
+document
+    .getElementById("modalCancel")
+    .addEventListener(
+        "click",
+        closeConfirm
+    );
+
+
+document
+    .getElementById("modalConfirm")
+    .addEventListener(
+        "click",
+        async ()=>{
+
+            const action =
+                pendingAction;
+
+
+            closeConfirm();
+
+
+            if(action){
+
+                await action();
+
+            }
+
+        }
+    );
+
+
+function closeConfirm(){
+
+    pendingAction =
+        null;
+
+
+    document
+        .getElementById("confirmModal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function createRoomId(title){
+
+    const slug =
+        title
+            .toLowerCase()
+            .replace(
+                /[^a-z0-9]+/g,
+                "-"
+            )
+            .replace(
+                /^-+|-+$/g,
+                ""
+            );
+
+
+    return (
+        slug ||
+        "live-class"
+    ) +
+    "-" +
+    Math.random()
+        .toString(36)
+        .slice(2,8);
+
+}
+
+
+function getInitial(name){
+
+    return String(
+        name || "S"
+    )
+        .trim()
+        .charAt(0)
+        .toUpperCase();
+
+}
+
+
+function getTime(value){
+
+    if(!value){
+
+        return 0;
+
+    }
+
+
+    if(
+        typeof value.toMillis ===
+        "function"
+    ){
+
+        return value.toMillis();
+
+    }
+
+
+    if(value.seconds){
+
+        return value.seconds *
+            1000;
+
+    }
+
+
+    return 0;
+
+}
+
+
+function formatTime(value){
+
+    if(!value){
+
+        return "";
+
+    }
+
+
+    const date =
+        new Date(
+            getTime(value)
+        );
+
+
+    return date.toLocaleTimeString(
+        [],
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttribute(value){
+
+    return escapeHTML(value);
+
+}
+
+
+/* =====================================================
+   BEFORE UNLOAD
+===================================================== */
 
 window.addEventListener(
     "beforeunload",
-    () => {
-
-        if(liveStarted){
-
-            // Browser unload cannot reliably await
-            // Firebase operations.
-
-            try{
-
+    ()=>{
+        try{
+            if(liveActive){
                 leaveRoom();
-
-            }catch{}
-
+            }
+        }catch(error){
+            console.error(error);
         }
-
     }
 );
 
 </script>
 
 </body>
-</html>
+    </html>
