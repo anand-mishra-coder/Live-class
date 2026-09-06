@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 24px;
+            padding: 38px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 22px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #111827;
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .google-btn {
+            width: 100%;
+            height: 54px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            transition: 0.2s;
+        }
+
+        .google-btn:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        .google-icon {
+            width: 22px;
+            height: 22px;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e5e7eb;
+            border-top-color: #111827;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 7px;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 25px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 22px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="logo">
+                LC
+            </div>
+
+            <h1>Student Login</h1>
+
+            <p class="subtitle">
+                Sign in with your Google account to access
+                your live classes and lectures.
+            </p>
+
+            <button class="google-btn" id="googleLoginBtn">
+
+                <svg class="google-icon"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+
+                    <path
+                        fill="#4285F4"
+                        d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"/>
+
+                    <path
+                        fill="#34A853"
+                        d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.75z"/>
+
+                    <path
+                        fill="#FBBC05"
+                        d="M6.54 13.83A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.26.31-1.83V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.53z"/>
+
+                    <path
+                        fill="#EA4335"
+                        d="M12 6.14c1.43 0 2.72.49 3.73 1.46l2.8-2.8C16.83 3.16 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.7 5.39l3.24 2.53c.77-2.31 2.92-4.03 5.46-4.03z"/>
+
+                </svg>
+
+                <span>Sign in with Google</span>
+
+            </button>
+
+            <div class="loading" id="loading">
+                <span class="spinner"></span>
+                Signing in...
+            </div>
+
+            <div class="message" id="message"></div>
+
+            <div class="footer">
+                Secure Student Access
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Firebase -->
+    <script type="module">
+
+        import { initializeApp }
+            from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            onAuthStateChanged
+        }
+        from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            serverTimestamp
+        }
+        from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+
+        // ==========================================
+        // FIREBASE CONFIG
+        // ==========================================
+
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCjA9mR5DoiUYGtgGrDuEL06yJHmcZZEEk",
+  authDomain: "callapp-72e39.firebaseapp.com",
+  projectId: "callapp-72e39",
+  storageBucket: "callapp-72e39.firebasestorage.app",
+  messagingSenderId: "888678726875",
+  appId: "1:888678726875:web:d35640047a732eed4ba0fe",
+  measurementId: "G-NV9BDKB2FZ"
+};
+
+        // ==========================================
+        // FIREBASE INITIALIZE
+        // ==========================================
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+
+        const db = getFirestore(app);
+
+        const provider = new GoogleAuthProvider();
+
+
+        // ==========================================
+        // ELEMENTS
+        // ==========================================
+
+        const googleLoginBtn =
+            document.getElementById("googleLoginBtn");
+
+        const loading =
+            document.getElementById("loading");
+
+        const message =
+            document.getElementById("message");
+
+
+        // ==========================================
+        // SHOW MESSAGE
+        // ==========================================
+
+        function showMessage(text) {
+
+            message.textContent = text;
+
+            message.style.display = "block";
+        }
+
+
+        // ==========================================
+        // GOOGLE LOGIN
+        // ==========================================
+
+        googleLoginBtn.addEventListener("click", async () => {
+
+            message.style.display = "none";
+
+            googleLoginBtn.disabled = true;
+
+            googleLoginBtn.style.opacity = "0.6";
+
+            loading.style.display = "block";
+
+            try {
+
+                const result =
+                    await signInWithPopup(auth, provider);
+
+                const user = result.user;
+
+
+                // ==================================
+                // USER DOCUMENT
+                // ==================================
+
+                const userRef =
+                    doc(db, "users", user.uid);
+
+                const userSnap =
+                    await getDoc(userRef);
+
+
+                // ==================================
+                // NEW STUDENT
+                // ==================================
+
+                if (!userSnap.exists()) {
+
+                    await setDoc(userRef, {
+
+                        uid: user.uid,
+
+                        name:
+                            user.displayName || "Student",
+
+                        email:
+                            user.email || "",
+
+                        photoURL:
+                            user.photoURL || "",
+
+                        role: "student",
+
+                        blocked: false,
+
+                        createdAt:
+                            serverTimestamp(),
+
+                        lastSeen:
+                            serverTimestamp()
+
+                    });
+
+                }
+
+                else {
+
+                    // Update last seen
+
+                    await setDoc(
+                        userRef,
+                        {
+                            lastSeen:
+                                serverTimestamp()
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+                }
+
+
+                // ==================================
+                // CHECK BLOCK STATUS
+                // ==================================
+
+                const updatedSnap =
+                    await getDoc(userRef);
+
+                const userData =
+                    updatedSnap.data();
+
+
+                if (userData.blocked === true) {
+
+                    await auth.signOut();
+
+                    throw new Error(
+                        "Your account has been blocked by the administrator."
+                    );
+                }
+
+
+                // ==================================
+                // GO TO DASHBOARD
+                // ==================================
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                showMessage(
+                    error.message ||
+                    "Google sign-in failed. Please try again."
+                );
+
+                googleLoginBtn.disabled = false;
+
+                googleLoginBtn.style.opacity = "1";
+
+                loading.style.display = "none";
+            }
+
+        });
+
+
+        // ==========================================
+        // AUTH STATE
+        // ==========================================
+
+        onAuthStateChanged(auth, async (user) => {
+
+            if (!user) {
+                return;
+            }
+
+            try {
+
+                const userRef =
+                    doc(db, "users", user.uid);
+
+                const userSnap =
+                    await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    return;
+                }
+
+                const userData =
+                    userSnap.data();
+
+
+                // Blocked user
+
+                if (userData.blocked === true) {
+
+                    await auth.signOut();
+
+                    showMessage(
+                        "Your account has been blocked by the administrator."
+                    );
+
+                    return;
+                }
+
+
+                // Already logged in
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Auth check error:",
+                    error
+                );
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
