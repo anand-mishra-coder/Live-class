@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LiveClass — Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        :root{
+            --bg:#070b14;
+            --card:#0d1320;
+            --card2:#111827;
+            --border:rgba(255,255,255,.08);
+
+            --text:#f8fafc;
+            --muted:#94a3b8;
+
+            --primary:#6366f1;
+            --secondary:#8b5cf6;
+
+            --green:#22c55e;
+            --red:#ef4444;
+
+            --shadow:0 20px 60px rgba(0,0,0,.35);
+        }
+
+        body{
+            font-family:"Inter",sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%,rgba(99,102,241,.16),transparent 30%),
+                radial-gradient(circle at 90% 10%,rgba(139,92,246,.13),transparent 30%),
+                var(--bg);
+            color:var(--text);
+            min-height:100vh;
+            overflow-x:hidden;
+        }
+
+        button,
+        input{
+            font-family:inherit;
+        }
+
+        a{
+            text-decoration:none;
+            color:inherit;
+        }
+
+        /* =========================
+           LOADING
+        ========================== */
+
+        #loadingScreen{
+            position:fixed;
+            inset:0;
+            z-index:9999;
+            background:#070b14;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-direction:column;
+            gap:18px;
+            transition:.4s;
+        }
+
+        .loaderLogo{
+            width:58px;
+            height:58px;
+            border-radius:18px;
+
+            background:linear-gradient(
+                135deg,
+                var(--primary),
+                var(--secondary)
+            );
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            font-size:25px;
+            font-weight:800;
+
+            box-shadow:
+                0 0 35px rgba(99,102,241,.45);
+        }
+
+        .loader{
+            width:34px;
+            height:34px;
+            border:3px solid rgba(255,255,255,.12);
+            border-top-color:#818cf8;
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        /* =========================
+           APP
+        ========================== */
+
+        .app{
+            min-height:100vh;
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        header{
+            position:sticky;
+            top:0;
+            z-index:100;
+
+            height:76px;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            padding:0 5%;
+
+            background:rgba(7,11,20,.72);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+
+            border-bottom:1px solid var(--border);
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:11px;
+            font-weight:800;
+            font-size:20px;
+        }
+
+        .brandLogo{
+            width:39px;
+            height:39px;
+            border-radius:12px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            background:linear-gradient(
+                135deg,
+                var(--primary),
+                var(--secondary)
+            );
+
+            box-shadow:0 8px 25px rgba(99,102,241,.3);
+        }
+
+        .headerRight{
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+
+        .notification{
+            width:40px;
+            height:40px;
+            border-radius:12px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            background:rgba(255,255,255,.05);
+            border:1px solid var(--border);
+
+            cursor:pointer;
+            font-size:18px;
+        }
+
+        .profile{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            cursor:pointer;
+        }
+
+        .profile img{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid rgba(255,255,255,.12);
+        }
+
+        .profileInfo{
+            display:flex;
+            flex-direction:column;
+        }
+
+        .profileName{
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .profileEmail{
+            font-size:10px;
+            color:var(--muted);
+            max-width:160px;
+            overflow:hidden;
+            white-space:nowrap;
+            text-overflow:ellipsis;
+        }
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        main{
+            width:min(1400px,90%);
+            margin:auto;
+            padding:45px 0 90px;
+        }
+
+        /* =========================
+           WELCOME
+        ========================== */
+
+        .welcome{
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:25px;
+            margin-bottom:35px;
+        }
+
+        .welcome h1{
+            font-size:clamp(28px,4vw,46px);
+            line-height:1.1;
+            letter-spacing:-1.5px;
+            margin-bottom:10px;
+        }
+
+        .gradientText{
+            background:linear-gradient(
+                90deg,
+                #818cf8,
+                #a78bfa,
+                #c084fc
+            );
+
+            -webkit-background-clip:text;
+            background-clip:text;
+            color:transparent;
+        }
+
+        .welcome p{
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .searchBox{
+            width:min(330px,100%);
+            position:relative;
+        }
+
+        .searchBox input{
+            width:100%;
+            height:48px;
+
+            border-radius:14px;
+            border:1px solid var(--border);
+
+            background:rgba(255,255,255,.045);
+
+            color:white;
+            outline:none;
+
+            padding:0 16px 0 44px;
+        }
+
+        .searchBox input:focus{
+            border-color:rgba(129,140,248,.55);
+            box-shadow:0 0 0 3px rgba(99,102,241,.1);
+        }
+
+        .searchIcon{
+            position:absolute;
+            left:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:var(--muted);
+        }
+
+        /* =========================
+           STATS
+        ========================== */
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:16px;
+            margin-bottom:35px;
+        }
+
+        .stat{
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.06),
+                    rgba(255,255,255,.025)
+                );
+
+            border:1px solid var(--border);
+            border-radius:20px;
+            padding:22px;
+
+            box-shadow:var(--shadow);
+
+            position:relative;
+            overflow:hidden;
+        }
+
+        .stat::after{
+            content:"";
+            position:absolute;
+            width:90px;
+            height:90px;
+            border-radius:50%;
+            right:-35px;
+            bottom:-35px;
+
+            background:rgba(99,102,241,.12);
+            filter:blur(10px);
+        }
+
+        .statIcon{
+            width:42px;
+            height:42px;
+            border-radius:13px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            background:rgba(99,102,241,.12);
+            color:#a5b4fc;
+
+            margin-bottom:15px;
+        }
+
+        .statValue{
+            font-size:26px;
+            font-weight:800;
+        }
+
+        .statLabel{
+            color:var(--muted);
+            font-size:12px;
+            margin-top:5px;
+        }
+
+        /* =========================
+           LIVE CLASS
+        ========================== */
+
+        .sectionHeader{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            margin-bottom:16px;
+        }
+
+        .sectionHeader h2{
+            font-size:20px;
+        }
+
+        .viewAll{
+            font-size:12px;
+            color:#a5b4fc;
+            cursor:pointer;
+        }
+
+        .liveCard{
+            position:relative;
+            min-height:230px;
+
+            border-radius:24px;
+
+            overflow:hidden;
+
+            border:1px solid rgba(239,68,68,.25);
+
+            background:
+                radial-gradient(
+                    circle at 85% 30%,
+                    rgba(239,68,68,.15),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #15101a,
+                    #0d1320
+                );
+
+            margin-bottom:38px;
+
+            box-shadow:var(--shadow);
+        }
+
+        .liveContent{
+            position:relative;
+            z-index:2;
+
+            padding:32px;
+
+            max-width:750px;
+        }
+
+        .liveBadge{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+
+            padding:7px 11px;
+
+            border-radius:30px;
+
+            background:rgba(239,68,68,.12);
+            border:1px solid rgba(239,68,68,.25);
+
+            color:#fca5a5;
+
+            font-size:11px;
+            font-weight:700;
+
+            margin-bottom:17px;
+        }
+
+        .liveDot{
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:#ef4444;
+
+            box-shadow:0 0 12px #ef4444;
+
+            animation:pulse 1.2s infinite;
+        }
+
+        @keyframes pulse{
+            50%{
+                opacity:.35;
+            }
+        }
+
+        .liveTitle{
+            font-size:27px;
+            font-weight:800;
+            margin-bottom:9px;
+        }
+
+        .liveDescription{
+            color:var(--muted);
+            font-size:13px;
+            line-height:1.6;
+            margin-bottom:22px;
+        }
+
+        .joinButton{
+            border:0;
+            padding:13px 20px;
+
+            border-radius:13px;
+
+            background:linear-gradient(
+                135deg,
+                #ef4444,
+                #dc2626
+            );
+
+            color:white;
+            font-weight:700;
+
+            cursor:pointer;
+
+            box-shadow:0 10px 30px rgba(239,68,68,.25);
+
+            transition:.2s;
+        }
+
+        .joinButton:hover{
+            transform:translateY(-2px);
+        }
+
+        .noLive{
+            min-height:180px;
+
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+
+            color:var(--muted);
+        }
+
+        .noLiveIcon{
+            font-size:34px;
+            margin-bottom:12px;
+            opacity:.7;
+        }
+
+        /* =========================
+           GRID
+        ========================== */
+
+        .contentGrid{
+            display:grid;
+            grid-template-columns:1.5fr .8fr;
+            gap:22px;
+        }
+
+        .panel{
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.055),
+                    rgba(255,255,255,.02)
+                );
+
+            border:1px solid var(--border);
+            border-radius:22px;
+            padding:23px;
+        }
+
+        /* =========================
+           CLASS CARDS
+        ========================== */
+
+        .classList{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .classItem{
+            display:flex;
+            align-items:center;
+            gap:15px;
+
+            padding:13px;
+
+            border-radius:16px;
+
+            background:rgba(255,255,255,.035);
+            border:1px solid rgba(255,255,255,.055);
+
+            cursor:pointer;
+
+            transition:.2s;
+        }
+
+        .classItem:hover{
+            background:rgba(255,255,255,.065);
+            transform:translateY(-1px);
+        }
+
+        .thumbnail{
+            width:110px;
+            height:67px;
+
+            border-radius:11px;
+
+            object-fit:cover;
+
+            background:#151b29;
+
+            flex-shrink:0;
+        }
+
+        .classInfo{
+            min-width:0;
+            flex:1;
+        }
+
+        .classInfo h3{
+            font-size:13px;
+            margin-bottom:6px;
+
+            overflow:hidden;
+            white-space:nowrap;
+            text-overflow:ellipsis;
+        }
+
+        .classMeta{
+            display:flex;
+            gap:8px;
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .play{
+            width:38px;
+            height:38px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:12px;
+
+            background:rgba(99,102,241,.12);
+            color:#a5b4fc;
+
+            flex-shrink:0;
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================== */
+
+        .actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+        }
+
+        .action{
+            padding:18px 14px;
+
+            border-radius:16px;
+
+            background:rgba(255,255,255,.035);
+            border:1px solid rgba(255,255,255,.06);
+
+            transition:.2s;
+            cursor:pointer;
+        }
+
+        .action:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,.06);
+        }
+
+        .actionIcon{
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:12px;
+
+            background:rgba(99,102,241,.12);
+            color:#a5b4fc;
+
+            margin-bottom:12px;
+        }
+
+        .action strong{
+            display:block;
+            font-size:12px;
+        }
+
+        .action span{
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        /* =========================
+           PROGRESS
+        ========================== */
+
+        .progressBox{
+            margin-top:20px;
+        }
+
+        .progressTop{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:9px;
+            font-size:11px;
+        }
+
+        .progressTop span:last-child{
+            color:#a5b4fc;
+            font-weight:700;
+        }
+
+        .progressBar{
+            width:100%;
+            height:7px;
+
+            background:rgba(255,255,255,.07);
+
+            border-radius:10px;
+            overflow:hidden;
+        }
+
+        .progressFill{
+            height:100%;
+            width:0%;
+
+            background:linear-gradient(
+                90deg,
+                var(--primary),
+                var(--secondary)
+            );
+
+            border-radius:10px;
+
+            transition:1s;
+        }
+
+        /* =========================
+           PROFILE MENU
+        ========================== */
+
+        .profileMenu{
+            position:fixed;
+            top:70px;
+            right:5%;
+
+            width:230px;
+
+            background:#101722;
+            border:1px solid var(--border);
+
+            border-radius:17px;
+
+            padding:8px;
+
+            box-shadow:0 25px 70px rgba(0,0,0,.5);
+
+            display:none;
+
+            z-index:500;
+        }
+
+        .profileMenu.show{
+            display:block;
+            animation:menuIn .15s ease;
+        }
+
+        @keyframes menuIn{
+            from{
+                opacity:0;
+                transform:translateY(-5px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .menuUser{
+            padding:12px;
+            border-bottom:1px solid var(--border);
+            margin-bottom:5px;
+        }
+
+        .menuUser strong{
+            display:block;
+            font-size:12px;
+        }
+
+        .menuUser span{
+            color:var(--muted);
+            font-size:10px;
+        }
+
+        .menuBtn{
+            width:100%;
+            border:0;
+            background:transparent;
+            color:#e2e8f0;
+
+            padding:11px 12px;
+
+            border-radius:10px;
+
+            text-align:left;
+
+            cursor:pointer;
+        }
+
+        .menuBtn:hover{
+            background:rgba(255,255,255,.05);
+        }
+
+        .logoutBtn{
+            color:#fca5a5;
+        }
+
+        /* =========================
+           BOTTOM NAV
+        ========================== */
+
+        .bottomNav{
+            display:none;
+        }
+
+        /* =========================
+           TOAST
+        ========================== */
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:30px;
+
+            transform:translate(-50%,20px);
+
+            background:#151c2a;
+
+            border:1px solid var(--border);
+
+            padding:12px 17px;
+
+            border-radius:12px;
+
+            font-size:12px;
+
+            box-shadow:0 20px 50px rgba(0,0,0,.4);
+
+            opacity:0;
+            pointer-events:none;
+
+            transition:.25s;
+
+            z-index:999;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translate(-50%,0);
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media(max-width:950px){
+
+            .stats{
+                grid-template-columns:repeat(2,1fr);
+            }
+
+            .contentGrid{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media(max-width:650px){
+
+            header{
+                height:68px;
+                padding:0 18px;
+            }
+
+            .profileInfo,
+            .notification{
+                display:none;
+            }
+
+            .brand{
+                font-size:17px;
+            }
+
+            main{
+                width:calc(100% - 30px);
+                padding:28px 0 100px;
+            }
+
+            .welcome{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .welcome h1{
+                font-size:30px;
+            }
+
+            .stats{
+                gap:10px;
+            }
+
+            .stat{
+                padding:16px;
+                border-radius:16px;
+            }
+
+            .statValue{
+                font-size:22px;
+            }
+
+            .liveContent{
+                padding:24px;
+            }
+
+            .liveTitle{
+                font-size:21px;
+            }
+
+            .panel{
+                padding:16px;
+                border-radius:18px;
+            }
+
+            .thumbnail{
+                width:85px;
+                height:58px;
+            }
+
+            .classItem{
+                padding:10px;
+            }
+
+            .classInfo h3{
+                font-size:11px;
+            }
+
+            .bottomNav{
+                position:fixed;
+                bottom:12px;
+                left:15px;
+                right:15px;
+
+                height:64px;
+
+                display:flex;
+                align-items:center;
+                justify-content:space-around;
+
+                background:rgba(13,19,32,.88);
+
+                border:1px solid var(--border);
+
+                backdrop-filter:blur(20px);
+
+                border-radius:20px;
+
+                z-index:300;
+
+                box-shadow:0 20px 50px rgba(0,0,0,.45);
+            }
+
+            .navItem{
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                gap:4px;
+
+                color:var(--muted);
+
+                font-size:9px;
+
+                cursor:pointer;
+            }
+
+            .navItem.active{
+                color:#a5b4fc;
+            }
+
+            .navIcon{
+                font-size:18px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     LOADING
+========================== -->
+
+<div id="loadingScreen">
+
+    <div class="loaderLogo">
+        LC
+    </div>
+
+    <div class="loader"></div>
+
+</div>
+
+
+<div class="app">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <a href="home.html" class="brand">
+
+            <div class="brandLogo">
+                LC
+            </div>
+
+            <span>LiveClass</span>
+
+        </a>
+
+
+        <div class="headerRight">
+
+            <div class="notification"
+                 onclick="showToast('Notifications coming soon')">
+                ♢
+            </div>
+
+
+            <div class="profile"
+                 onclick="toggleProfileMenu()">
+
+                <img
+                    id="userPhoto"
+                    src="https://via.placeholder.com/100"
+                    alt="Profile"
+                >
+
+                <div class="profileInfo">
+
+                    <span
+                        class="profileName"
+                        id="userName">
+                        Student
+                    </span>
+
+                    <span
+                        class="profileEmail"
+                        id="userEmail">
+                        Loading...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         PROFILE MENU
+    ========================== -->
+
+    <div
+        class="profileMenu"
+        id="profileMenu">
+
+        <div class="menuUser">
+
+            <strong id="menuName">
+                Student
+            </strong>
+
+            <span id="menuEmail">
+                -
+            </span>
+
+        </div>
+
+
+        <button
+            class="menuBtn"
+            onclick="location.href='classes.html'">
+
+            My Classes
+
+        </button>
+
+
+        <button
+            class="menuBtn"
+            onclick="showToast('Profile settings coming soon')">
+
+            Profile Settings
+
+        </button>
+
+
+        <button
+            class="menuBtn logoutBtn"
+            onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome">
+
+            <div>
+
+                <h1>
+                    Welcome back,
+                    <span
+                        class="gradientText"
+                        id="welcomeName">
+                        Student
+                    </span>
+                </h1>
+
+                <p>
+                    Continue your learning journey and stay consistent.
+                </p>
+
+            </div>
+
+
+            <div class="searchBox">
+
+                <span class="searchIcon">
+                    ⌕
+                </span>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search classes, chapters..."
+                >
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             STATS
+        ========================== -->
+
+        <section class="stats">
+
+            <div class="stat">
+
+                <div class="statIcon">
+                    ◷
+                </div>
+
+                <div
+                    class="statValue"
+                    id="watchTime">
+                    0h
+                </div>
+
+                <div class="statLabel">
+                    Learning Time
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="statIcon">
+                    ✓
+                </div>
+
+                <div
+                    class="statValue"
+                    id="completedCount">
+                    0
+                </div>
+
+                <div class="statLabel">
+                    Classes Completed
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="statIcon">
+                    ◉
+                </div>
+
+                <div
+                    class="statValue"
+                    id="streakCount">
+                    0
+                </div>
+
+                <div class="statLabel">
+                    Day Streak
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="statIcon">
+                    %
+                </div>
+
+                <div
+                    class="statValue"
+                    id="progressValue">
+                    0%
+                </div>
+
+                <div class="statLabel">
+                    Overall Progress
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             LIVE CLASS
+        ========================== -->
+
+        <div class="sectionHeader">
+
+            <h2>
+                Live Class
+            </h2>
+
+        </div>
+
+
+        <section
+            class="liveCard"
+            id="liveCard">
+
+            <div
+                class="noLive"
+                id="noLive">
+
+                <div class="noLiveIcon">
+                    ◉
+                </div>
+
+                <strong>
+                    No live class right now
+                </strong>
+
+                <span style="font-size:11px;margin-top:6px;">
+                    Check again later for upcoming classes.
+                </span>
+
+            </div>
+
+
+            <div
+                class="liveContent"
+                id="liveContent"
+                style="display:none;">
+
+                <div class="liveBadge">
+
+                    <span class="liveDot"></span>
+
+                    LIVE NOW
+
+                </div>
+
+
+                <div
+                    class="liveTitle"
+                    id="liveTitle">
+                    Live Class
+                </div>
+
+
+                <div
+                    class="liveDescription"
+                    id="liveDescription">
+                    Your teacher is live now.
+                </div>
+
+
+                <button
+                    class="joinButton"
+                    id="joinLiveBtn">
+
+                    Join Live Class
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             CONTENT GRID
+        ========================== -->
+
+        <section class="contentGrid">
+
+
+            <!-- RECENT CLASSES -->
+
+            <div class="panel">
+
+                <div class="sectionHeader">
+
+                    <h2>
+                        Recent Lectures
+                    </h2>
+
+                    <a
+                        href="classes.html"
+                        class="viewAll">
+                        View all →
+                    </a>
+
+                </div>
+
+
+                <div
+                    class="classList"
+                    id="recentClasses">
+
+                    <div style="
+                        padding:30px;
+                        text-align:center;
+                        color:#64748b;
+                        font-size:12px;
+                    ">
+                        Loading lectures...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT PANEL -->
+
+            <div class="panel">
+
+                <div class="sectionHeader">
+
+                    <h2>
+                        Quick Access
+                    </h2>
+
+                </div>
+
+
+                <div class="actions">
+
+
+                    <div
+                        class="action"
+                        onclick="location.href='classes.html'">
+
+                        <div class="actionIcon">
+                            ▶
+                        </div>
+
+                        <strong>
+                            Recorded Classes
+                        </strong>
+
+                        <span>
+                            Watch lectures
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="action"
+                        onclick="showToast('Tests module coming soon')">
+
+                        <div class="actionIcon">
+                            ✓
+                        </div>
+
+                        <strong>
+                            Tests
+                        </strong>
+
+                        <span>
+                            Practice & improve
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="action"
+                        onclick="showToast('Notes module coming soon')">
+
+                        <div class="actionIcon">
+                            ≡
+                        </div>
+
+                        <strong>
+                            Notes
+                        </strong>
+
+                        <span>
+                            Study material
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="action"
+                        onclick="showToast('Progress analytics coming soon')">
+
+                        <div class="actionIcon">
+                            ↗
+                        </div>
+
+                        <strong>
+                            Analytics
+                        </strong>
+
+                        <span>
+                            Track progress
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROGRESS -->
+
+                <div class="progressBox">
+
+                    <div class="progressTop">
+
+                        <span>
+                            Overall Progress
+                        </span>
+
+                        <span id="progressText">
+                            0%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progressBar">
+
+                        <div
+                            class="progressFill"
+                            id="progressFill">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         MOBILE NAV
+    ========================== -->
+
+    <nav class="bottomNav">
+
+        <div
+            class="navItem active"
+            onclick="location.href='home.html'">
+
+            <div class="navIcon">
+                ⌂
+            </div>
+
+            <span>
+                Home
+            </span>
+
+        </div>
+
+
+        <div
+            class="navItem"
+            onclick="location.href='classes.html'">
+
+            <div class="navIcon">
+                ▶
+            </div>
+
+            <span>
+                Classes
+            </span>
+
+        </div>
+
+
+        <div
+            class="navItem"
+            onclick="joinActiveLive()">
+
+            <div class="navIcon">
+                ●
+            </div>
+
+            <span>
+                Live
+            </span>
+
+        </div>
+
+
+        <div
+            class="navItem"
+            onclick="showToast('Profile settings coming soon')">
+
+            <div class="navIcon">
+                ○
+            </div>
+
+            <span>
+                Profile
+            </span>
+
+        </div>
+
+    </nav>
+
+
+    <!-- TOAST -->
+
+    <div
+        class="toast"
+        id="toast">
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FIREBASE
+========================== -->
+
+<script type="module">
+
+import {
+    auth,
+    db,
+    onAuthStateChanged,
+    signOut,
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    doc,
+    setDoc,
+    getDoc
+} from "./firebase.js";
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loadingScreen =
+    document.getElementById("loadingScreen");
+
+const userName =
+    document.getElementById("userName");
+
+const userEmail =
+    document.getElementById("userEmail");
+
+const userPhoto =
+    document.getElementById("userPhoto");
+
+const welcomeName =
+    document.getElementById("welcomeName");
+
+const menuName =
+    document.getElementById("menuName");
+
+const menuEmail =
+    document.getElementById("menuEmail");
+
+const recentClasses =
+    document.getElementById("recentClasses");
+
+const noLive =
+    document.getElementById("noLive");
+
+const liveContent =
+    document.getElementById("liveContent");
+
+const liveTitle =
+    document.getElementById("liveTitle");
+
+const liveDescription =
+    document.getElementById("liveDescription");
+
+const joinLiveBtn =
+    document.getElementById("joinLiveBtn");
+
+
+/* =========================================
+   STATE
+========================================= */
+
+let currentUser = null;
+
+let activeRoomId = null;
+
+let allClasses = [];
+
+
+/* =========================================
+   SAFE TEXT
+========================================= */
+
+function safeText(value){
+
+    if(value === undefined || value === null){
+        return "";
+    }
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+/* =========================================
+   AUTH
+========================================= */
+
+onAuthStateChanged(auth, async (user)=>{
+
+    if(!user){
+
+        location.replace("index.html");
+
+        return;
+    }
+
+
+    currentUser = user;
+
+
+    const name =
+        user.displayName ||
+        user.email?.split("@")[0] ||
+        "Student";
+
+
+    userName.textContent = name;
+
+    welcomeName.textContent = name.split(" ")[0];
+
+    userEmail.textContent =
+        user.email || "";
+
+    menuName.textContent = name;
+
+    menuEmail.textContent =
+        user.email || "";
+
+
+    if(user.photoURL){
+
+        userPhoto.src =
+            user.photoURL;
+
+    }
+
+
+    await saveUserProfile(user);
+
+
+    loadRecordedClasses();
+
+    loadLiveClass();
+
+    loadUserStats();
+
+
+    setTimeout(()=>{
+
+        loadingScreen.style.opacity = "0";
+
+        setTimeout(()=>{
+
+            loadingScreen.style.display = "none";
+
+        },400);
+
+    },300);
+
+});
+
+
+/* =========================================
+   SAVE USER PROFILE
+========================================= */
+
+async function saveUserProfile(user){
+
+    try{
+
+        const userRef =
+            doc(db,"users",user.uid);
+
+
+        await setDoc(
+            userRef,
+            {
+                uid:user.uid,
+                name:user.displayName || "Student",
+                email:user.email || "",
+                photo:user.photoURL || "",
+                lastLogin:new Date().toISOString()
+            },
+            {
+                merge:true
+            }
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Profile save failed:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   RECORDED CLASSES
+========================================= */
+
+function loadRecordedClasses(){
+
+    try{
+
+        const classesQuery =
+            query(
+                collection(db,"recordedClasses"),
+                orderBy("createdAt","desc")
+            );
+
+
+        onSnapshot(
+            classesQuery,
+            (snapshot)=>{
+
+                allClasses = [];
+
+                snapshot.forEach((item)=>{
+
+                    allClasses.push({
+                        id:item.id,
+                        ...item.data()
+                    });
+
+                });
+
+
+                renderClasses(allClasses.slice(0,6));
+
+            },
+            (error)=>{
+
+                console.error(error);
+
+                recentClasses.innerHTML = `
+                    <div style="
+                        padding:25px;
+                        text-align:center;
+                        color:#94a3b8;
+                        font-size:12px;
+                    ">
+                        Unable to load lectures.
+                    </div>
+                `;
+
+            }
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================
+   RENDER CLASSES
+========================================= */
+
+function renderClasses(classes){
+
+    if(!classes.length){
+
+        recentClasses.innerHTML = `
+            <div style="
+                padding:35px;
+                text-align:center;
+                color:#64748b;
+                font-size:12px;
+            ">
+                No recorded lectures available yet.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    recentClasses.innerHTML =
+        classes.map(item=>{
+
+            const title =
+                safeText(
+                    item.title ||
+                    "Untitled Lecture"
+                );
+
+
+            const subject =
+                safeText(
+                    item.subject ||
+                    "Lecture"
+                );
+
+
+            const chapter =
+                safeText(
+                    item.chapter ||
+                    ""
+                );
+
+
+            const thumbnail =
+                item.thumbnail ||
+                "https://via.placeholder.com/300x180?text=Lecture";
+
+
+            return `
+
+                <div
+                    class="classItem"
+                    data-id="${safeText(item.id)}">
+
+                    <img
+                        class="thumbnail"
+                        src="${safeText(thumbnail)}"
+                        alt="Lecture thumbnail"
+                        onerror="
+                            this.src='https://via.placeholder.com/300x180?text=Lecture'
+                        "
+                    >
+
+                    <div class="classInfo">
+
+                        <h3>
+                            ${title}
+                        </h3>
+
+                        <div class="classMeta">
+
+                            <span>
+                                ${subject}
+                            </span>
+
+                            ${
+                                chapter
+                                ?
+                                `<span>•</span>
+                                 <span>${chapter}</span>`
+                                :
+                                ""
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <div class="play">
+                        ▶
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    document
+        .querySelectorAll(".classItem")
+        .forEach(card=>{
+
+            card.addEventListener(
+                "click",
+                ()=>{
+                    location.href =
+                        "classes.html";
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================
+   LIVE CLASS
+========================================= */
+
+function loadLiveClass(){
+
+    const liveQuery =
+        query(
+            collection(db,"liveClasses")
+        );
+
+
+    onSnapshot(
+        liveQuery,
+        (snapshot)=>{
+
+            let live = null;
+
+
+            snapshot.forEach(item=>{
+
+                const data =
+                    item.data();
+
+
+                if(data.active === true){
+
+                    live = {
+                        id:item.id,
+                        ...data
+                    };
+
+                }
+
+            });
+
+
+            if(!live){
+
+                activeRoomId = null;
+
+                noLive.style.display =
+                    "flex";
+
+                liveContent.style.display =
+                    "none";
+
+                return;
+            }
+
+
+            activeRoomId =
+                live.roomId || live.id;
+
+
+            noLive.style.display =
+                "none";
+
+            liveContent.style.display =
+                "block";
+
+
+            liveTitle.textContent =
+                live.title ||
+                "Live Class";
+
+
+            const subject =
+                live.subject ||
+                "";
+
+
+            liveDescription.textContent =
+                subject
+                ?
+                `${subject} • Your teacher is live now.`
+                :
+                "Your teacher is live now.";
+
+
+            joinLiveBtn.onclick =
+                joinActiveLive;
+
+        },
+        (error)=>{
+
+            console.error(
+                "Live class error:",
+                error
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   JOIN LIVE
+========================================= */
+
+window.joinActiveLive = function(){
+
+    if(!activeRoomId){
+
+        showToast(
+            "No live class is active right now."
+        );
+
+        return;
+    }
+
+
+    location.href =
+        `live-class.html?room=${encodeURIComponent(activeRoomId)}`;
+
+};
+
+
+/* =========================================
+   USER STATS
+========================================= */
+
+async function loadUserStats(){
+
+    if(!currentUser){
+        return;
+    }
+
+
+    try{
+
+        const ref =
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            );
+
+
+        const snapshot =
+            await getDoc(ref);
+
+
+        if(!snapshot.exists()){
+            return;
+        }
+
+
+        const data =
+            snapshot.data();
+
+
+        const watchTime =
+            Number(data.watchTime || 0);
+
+
+        const completed =
+            Number(data.completedClasses || 0);
+
+
+        const streak =
+            Number(data.streak || 0);
+
+
+        const progress =
+            Number(data.progress || 0);
+
+
+        document.getElementById(
+            "watchTime"
+        ).textContent =
+            watchTime >= 60
+            ?
+            `${Math.floor(watchTime / 60)}h`
+            :
+            `${watchTime}m`;
+
+
+        document.getElementById(
+            "completedCount"
+        ).textContent =
+            completed;
+
+
+        document.getElementById(
+            "streakCount"
+        ).textContent =
+            streak;
+
+
+        document.getElementById(
+            "progressValue"
+        ).textContent =
+            `${progress}%`;
+
+
+        document.getElementById(
+            "progressText"
+        ).textContent =
+            `${progress}%`;
+
+
+        document.getElementById(
+            "progressFill"
+        ).style.width =
+            `${Math.min(progress,100)}%`;
+
+    }catch(error){
+
+        console.warn(
+            "Stats unavailable:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        (event)=>{
+
+            const value =
+                event.target.value
+                    .trim()
+                    .toLowerCase();
+
+
+            if(!value){
+
+                renderClasses(
+                    allClasses.slice(0,6)
+                );
+
+                return;
+            }
+
+
+            const filtered =
+                allClasses.filter(item=>{
+
+                    const text = [
+
+                        item.title,
+                        item.subject,
+                        item.chapter
+
+                    ]
+                    .join(" ")
+                    .toLowerCase();
+
+
+                    return text.includes(value);
+
+                });
+
+
+            renderClasses(
+                filtered.slice(0,6)
+            );
+
+        }
+    );
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+window.logout = async function(){
+
+    try{
+
+        await signOut(auth);
+
+        location.replace(
+            "index.html"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "Logout failed."
+        );
+
+    }
+
+};
+
+
+/* =========================================
+   PROFILE MENU
+========================================= */
+
+window.toggleProfileMenu = function(){
+
+    document
+        .getElementById("profileMenu")
+        .classList.toggle("show");
+
+};
+
+
+document.addEventListener(
+    "click",
+    (event)=>{
+
+        const menu =
+            document.getElementById(
+                "profileMenu"
+            );
+
+
+        const profile =
+            document.querySelector(
+                ".profile"
+            );
+
+
+        if(
+            !menu.contains(event.target) &&
+            !profile.contains(event.target)
+        ){
+
+            menu.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   TOAST
+========================================= */
+
+window.showToast = function(message){
+
+    const toast =
+        document.getElementById("toast");
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(()=>{
+
+        toast.classList.remove(
+            "show"
+        );
+
+    },2500);
+
+};
+
+</script>
+
+</body>
+</html>

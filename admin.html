@@ -1,0 +1,3197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveClass — Admin Panel</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#070b14;
+    --card:rgba(18,25,40,.78);
+    --border:rgba(255,255,255,.09);
+    --text:#f5f7fb;
+    --muted:#8e9aae;
+    --primary:#6366f1;
+    --primary2:#8b5cf6;
+    --danger:#ef4444;
+    --success:#22c55e;
+}
+
+body{
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:
+        radial-gradient(circle at 10% 10%,rgba(99,102,241,.18),transparent 30%),
+        radial-gradient(circle at 90% 80%,rgba(139,92,246,.13),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* =====================================================
+LOGIN
+===================================================== */
+
+.login-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.login-card{
+    width:100%;
+    max-width:430px;
+    padding:38px;
+    border:1px solid var(--border);
+    background:rgba(15,21,34,.86);
+    backdrop-filter:blur(25px);
+    border-radius:28px;
+    box-shadow:0 30px 100px rgba(0,0,0,.4);
+}
+
+.logo{
+    width:62px;
+    height:62px;
+    border-radius:18px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    font-size:27px;
+    font-weight:800;
+    margin-bottom:24px;
+}
+
+.login-card h1{
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.login-card p{
+    color:var(--muted);
+    margin-bottom:28px;
+}
+
+.google-btn{
+    width:100%;
+    padding:15px 18px;
+    border:none;
+    border-radius:14px;
+    background:#fff;
+    color:#111827;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+}
+
+.google-icon{
+    font-weight:900;
+}
+
+/* =====================================================
+APP
+===================================================== */
+
+.app{
+    display:none;
+    min-height:100vh;
+}
+
+.topbar{
+    height:72px;
+    border-bottom:1px solid var(--border);
+    background:rgba(7,11,20,.76);
+    backdrop-filter:blur(18px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    position:sticky;
+    top:0;
+    z-index:50;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    font-weight:800;
+}
+
+.brand h2{
+    font-size:17px;
+}
+
+.brand small{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.admin-profile{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.admin-profile img{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+}
+
+.logout-btn{
+    background:transparent;
+    color:#ff8b8b;
+    border:1px solid rgba(239,68,68,.25);
+    padding:9px 13px;
+    border-radius:10px;
+}
+
+/* =====================================================
+LAYOUT
+===================================================== */
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 72px);
+}
+
+.sidebar{
+    width:240px;
+    border-right:1px solid var(--border);
+    padding:20px 14px;
+    flex-shrink:0;
+}
+
+.nav-btn{
+    width:100%;
+    padding:13px 14px;
+    margin-bottom:7px;
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    text-align:left;
+    border-radius:12px;
+    transition:.2s;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+    background:rgba(99,102,241,.13);
+    color:white;
+}
+
+.main{
+    flex:1;
+    padding:28px;
+    max-width:1450px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    margin-bottom:24px;
+}
+
+.page-title h1{
+    font-size:28px;
+}
+
+.page-title p{
+    color:var(--muted);
+    margin-top:6px;
+}
+
+/* =====================================================
+CARDS
+===================================================== */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+}
+
+.stat-card{
+    padding:20px;
+    border:1px solid var(--border);
+    background:var(--card);
+    border-radius:18px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.stat-value{
+    font-size:28px;
+    font-weight:800;
+    margin-top:10px;
+}
+
+.card{
+    border:1px solid var(--border);
+    background:var(--card);
+    backdrop-filter:blur(18px);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.card h3{
+    margin-bottom:18px;
+}
+
+/* =====================================================
+FORM
+===================================================== */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+.field label{
+    color:#b9c1d1;
+    font-size:13px;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+    padding:13px 14px;
+    background:#0b1120;
+    color:white;
+    border:1px solid var(--border);
+    border-radius:12px;
+    outline:none;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+    border-color:var(--primary);
+}
+
+.field textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.primary-btn{
+    padding:13px 18px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    color:white;
+    font-weight:700;
+}
+
+.danger-btn{
+    padding:12px 17px;
+    border:none;
+    border-radius:12px;
+    background:var(--danger);
+    color:white;
+    font-weight:700;
+}
+
+.secondary-btn{
+    padding:12px 17px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#111827;
+    color:white;
+}
+
+/* =====================================================
+LIVE AREA
+===================================================== */
+
+.live-layout{
+    display:grid;
+    grid-template-columns:1.6fr .8fr;
+    gap:20px;
+}
+
+.video-box{
+    position:relative;
+    min-height:470px;
+    background:#020617;
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid var(--border);
+}
+
+#localVideo{
+    width:100%;
+    height:100%;
+    min-height:470px;
+    object-fit:cover;
+    background:#020617;
+}
+
+.video-placeholder{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    text-align:center;
+    pointer-events:none;
+}
+
+.live-badge{
+    position:absolute;
+    top:16px;
+    left:16px;
+    background:#ef4444;
+    padding:7px 12px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+    z-index:2;
+}
+
+.live-info{
+    position:absolute;
+    bottom:15px;
+    left:15px;
+    right:15px;
+    padding:13px 15px;
+    border-radius:13px;
+    background:rgba(0,0,0,.52);
+    backdrop-filter:blur(12px);
+    z-index:2;
+}
+
+.control-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-top:15px;
+}
+
+.control-btn{
+    border:1px solid var(--border);
+    background:#111827;
+    color:white;
+    padding:11px 14px;
+    border-radius:11px;
+}
+
+.control-btn.active{
+    background:rgba(99,102,241,.25);
+    border-color:rgba(99,102,241,.5);
+}
+
+.teacher-side{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.status-card{
+    padding:18px;
+    border-radius:18px;
+    border:1px solid var(--border);
+    background:var(--card);
+}
+
+.status-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.status-row:last-child{
+    border-bottom:none;
+}
+
+.status-value{
+    color:var(--success);
+}
+
+/* =====================================================
+TABLE
+===================================================== */
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:14px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+}
+
+th{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.action-btn{
+    border:none;
+    padding:8px 11px;
+    border-radius:8px;
+    background:#1f2937;
+    color:white;
+    margin-right:5px;
+}
+
+.action-btn.delete{
+    color:#ff8b8b;
+}
+
+/* =====================================================
+TOAST
+===================================================== */
+
+.toast{
+    position:fixed;
+    bottom:22px;
+    right:22px;
+    padding:14px 18px;
+    border-radius:13px;
+    background:#111827;
+    border:1px solid var(--border);
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+    transform:translateY(120px);
+    opacity:0;
+    transition:.3s;
+    z-index:100;
+}
+
+.toast.show{
+    transform:translateY(0);
+    opacity:1;
+}
+
+/* =====================================================
+MODAL
+===================================================== */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    display:none;
+    place-items:center;
+    padding:20px;
+    z-index:200;
+}
+
+.modal.show{
+    display:grid;
+}
+
+.modal-box{
+    width:100%;
+    max-width:460px;
+    background:#0d1422;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:25px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:22px;
+}
+
+/* =====================================================
+RESPONSIVE
+===================================================== */
+
+@media(max-width:1100px){
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .live-layout{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:760px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        padding:18px;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .logout-btn{
+        font-size:12px;
+    }
+
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .video-box,
+    #localVideo{
+        min-height:300px;
+    }
+}
+
+@media(max-width:450px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .login-card{
+        padding:25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+LOGIN
+===================================================== -->
+
+<section id="loginScreen" class="login-screen">
+
+    <div class="login-card">
+
+        <div class="logo">LC</div>
+
+        <h1>Admin Panel</h1>
+
+        <p>
+            Manage live classes, recorded lectures
+            and your classroom system.
+        </p>
+
+        <button id="googleLogin" class="google-btn">
+            <span class="google-icon">G</span>
+            Continue with Google
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+APP
+===================================================== -->
+
+<div id="app" class="app">
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            LC
+        </div>
+
+        <div>
+            <h2>LiveClass Admin</h2>
+            <small>Teacher Control Center</small>
+        </div>
+
+    </div>
+
+
+    <div class="admin-profile">
+
+        <img
+            id="adminPhoto"
+            src=""
+            alt="Admin"
+        >
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="layout">
+
+<!-- =====================================================
+SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <button
+        class="nav-btn active"
+        data-page="dashboardPage"
+    >
+        Dashboard
+    </button>
+
+    <button
+        class="nav-btn"
+        data-page="livePage"
+    >
+        Live Class
+    </button>
+
+    <button
+        class="nav-btn"
+        data-page="recordedPage"
+    >
+        Recorded Lectures
+    </button>
+
+</aside>
+
+
+<!-- =====================================================
+MAIN
+===================================================== -->
+
+<main class="main">
+
+
+<!-- =====================================================
+DASHBOARD
+===================================================== -->
+
+<section
+    id="dashboardPage"
+    class="page active"
+>
+
+    <div class="page-title">
+
+        <h1>Dashboard</h1>
+
+        <p>
+            Manage your complete classroom system.
+        </p>
+
+    </div>
+
+
+    <div class="grid">
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Recorded Lectures
+            </div>
+
+            <div
+                id="recordedCount"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Live Status
+            </div>
+
+            <div
+                id="liveStatus"
+                class="stat-value"
+            >
+                Offline
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Students Online
+            </div>
+
+            <div
+                id="studentCount"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Admin
+            </div>
+
+            <div
+                id="adminName"
+                class="stat-value"
+                style="font-size:17px"
+            >
+                —
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:20px">
+
+        <h3>Quick Actions</h3>
+
+        <div class="control-bar">
+
+            <button
+                class="primary-btn"
+                onclick="openPage('livePage')"
+            >
+                Start Live Class
+            </button>
+
+            <button
+                class="secondary-btn"
+                onclick="openPage('recordedPage')"
+            >
+                Add Recorded Lecture
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+LIVE PAGE
+===================================================== -->
+
+<section
+    id="livePage"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>Live Class</h1>
+
+        <p>
+            Start and control your live classroom.
+        </p>
+
+    </div>
+
+
+    <div
+        id="liveSetup"
+        class="card"
+    >
+
+        <h3>Class Details</h3>
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>
+                    Class Title
+                </label>
+
+                <input
+                    id="liveTitle"
+                    placeholder="Class 11 Physics — Vector Analysis"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Subject
+                </label>
+
+                <select id="liveSubject">
+
+                    <option>
+                        Physics
+                    </option>
+
+                    <option>
+                        Chemistry
+                    </option>
+
+                    <option>
+                        Mathematics
+                    </option>
+
+                    <option>
+                        Biology
+                    </option>
+
+                    <option>
+                        English
+                    </option>
+
+                    <option>
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Chapter
+                </label>
+
+                <input
+                    id="liveChapter"
+                    placeholder="Vector"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Room ID
+                </label>
+
+                <input
+                    id="roomId"
+                    placeholder="Leave blank for automatic ID"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div style="margin-top:18px">
+
+            <button
+                id="startLiveBtn"
+                class="primary-btn"
+            >
+                Start Live Class
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- LIVE CONTROL -->
+
+    <div
+        id="liveControl"
+        class="live-layout hidden"
+    >
+
+        <div>
+
+            <div class="video-box">
+
+                <div class="live-badge">
+                    LIVE
+                </div>
+
+                <video
+                    id="localVideo"
+                    autoplay
+                    playsinline
+                    muted
+                ></video>
+
+                <div
+                    id="videoPlaceholder"
+                    class="video-placeholder"
+                >
+                    <div>
+                        <h3>Camera Preview</h3>
+                        <p>
+                            Camera is currently off.
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="live-info">
+
+                    <strong id="liveTitleDisplay">
+                        Live Class
+                    </strong>
+
+                    <div
+                        id="roomDisplay"
+                        style="color:#aab2c2;font-size:12px;margin-top:4px"
+                    >
+                        Room:
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="control-bar">
+
+                <button
+                    id="muteBtn"
+                    class="control-btn"
+                >
+                    Mic ON
+                </button>
+
+                <button
+                    id="cameraBtn"
+                    class="control-btn"
+                >
+                    Camera ON
+                </button>
+
+                <button
+                    id="switchCameraBtn"
+                    class="control-btn"
+                >
+                    Switch Camera
+                </button>
+
+                <button
+                    id="screenBtn"
+                    class="control-btn"
+                >
+                    Share Screen
+                </button>
+
+                <button
+                    id="recordBtn"
+                    class="control-btn"
+                >
+                    Start Recording
+                </button>
+
+                <button
+                    id="downloadBtn"
+                    class="control-btn hidden"
+                >
+                    Download Recording
+                </button>
+
+                <button
+                    id="endLiveBtn"
+                    class="danger-btn"
+                >
+                    End Live
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <aside class="teacher-side">
+
+            <div class="status-card">
+
+                <h3>Live Status</h3>
+
+                <div class="status-row">
+
+                    <span>
+                        Connection
+                    </span>
+
+                    <span
+                        id="connectionStatus"
+                        class="status-value"
+                    >
+                        Connected
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Students
+                    </span>
+
+                    <strong id="liveStudentCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Microphone
+                    </span>
+
+                    <span id="micStatus">
+                        ON
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Camera
+                    </span>
+
+                    <span id="cameraStatus">
+                        ON
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Recording
+                    </span>
+
+                    <span id="recordStatus">
+                        OFF
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <h3>Student Room</h3>
+
+                <p
+                    id="studentRoomLink"
+                    style="
+                    color:#9aa4b7;
+                    font-size:13px;
+                    line-height:1.6;
+                    word-break:break-all;
+                    "
+                >
+                    Start the live class to generate room information.
+                </p>
+
+                <button
+                    id="copyRoomBtn"
+                    class="secondary-btn"
+                    style="margin-top:12px;width:100%"
+                >
+                    Copy Room ID
+                </button>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+RECORDED PAGE
+===================================================== -->
+
+<section
+    id="recordedPage"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>Recorded Lectures</h1>
+
+        <p>
+            Add lectures that students can watch anytime.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Add New Lecture</h3>
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>
+                    Lecture Title
+                </label>
+
+                <input
+                    id="lectureTitle"
+                    placeholder="Class 11 Physics — Vector Analysis"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Subject
+                </label>
+
+                <select id="lectureSubject">
+
+                    <option>Physics</option>
+                    <option>Chemistry</option>
+                    <option>Mathematics</option>
+                    <option>Biology</option>
+                    <option>English</option>
+                    <option>Other</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Chapter
+                </label>
+
+                <input
+                    id="lectureChapter"
+                    placeholder="Vector"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Thumbnail URL
+                </label>
+
+                <input
+                    id="lectureThumbnail"
+                    placeholder="https://..."
+                >
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    Google Drive Video URL
+                </label>
+
+                <input
+                    id="lectureVideo"
+                    placeholder="https://drive.google.com/file/d/FILE_ID/view"
+                >
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    id="lectureDescription"
+                    placeholder="Lecture description..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div style="margin-top:18px">
+
+            <button
+                id="addLectureBtn"
+                class="primary-btn"
+            >
+                Add Lecture
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>All Lectures</h3>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Chapter</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="lectureTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+CONFIRM MODAL
+===================================================== -->
+
+<div
+    id="confirmModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <h3>
+            End Live Class?
+        </h3>
+
+        <p
+            style="
+            color:#9aa4b7;
+            margin-top:9px;
+            line-height:1.6;
+            "
+        >
+            This will end the current live session for students.
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelEndBtn"
+                class="secondary-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmEndBtn"
+                class="danger-btn"
+            >
+                End Live
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- =====================================================
+JAVASCRIPT
+===================================================== -->
+
+<script type="module">
+
+import {
+    auth,
+    db,
+    googleProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged,
+    collection,
+    doc,
+    addDoc,
+    setDoc,
+    getDocs,
+    deleteDoc,
+    updateDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+} from "./firebase.js";
+
+
+import {
+    startCamera,
+    switchCamera,
+    toggleMute,
+    toggleCamera,
+    startScreenShare,
+    stopScreenShare,
+    joinRoom,
+    leaveRoom
+} from "./webrtc.js";
+
+
+// =====================================================
+// ADMIN UID
+// =====================================================
+
+// IMPORTANT:
+// यहाँ अपना Firebase Admin UID डालो.
+
+const ADMIN_UID = "sS2Jh9nxFyPxusF5GXKXDUSuKwp2";
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
+const loginScreen =
+    document.getElementById("loginScreen");
+
+const app =
+    document.getElementById("app");
+
+const googleLogin =
+    document.getElementById("googleLogin");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const adminPhoto =
+    document.getElementById("adminPhoto");
+
+const adminName =
+    document.getElementById("adminName");
+
+const recordedCount =
+    document.getElementById("recordedCount");
+
+const liveStatus =
+    document.getElementById("liveStatus");
+
+const studentCount =
+    document.getElementById("studentCount");
+
+
+// =====================================================
+// STATE
+// =====================================================
+
+let currentUser = null;
+
+let currentRoomId = null;
+
+let liveDocId = null;
+
+let liveStarted = false;
+
+let screenSharing = false;
+
+let mediaRecorder = null;
+
+let recordedChunks = [];
+
+let recordingBlob = null;
+
+let unsubscribeLive = null;
+
+let unsubscribeParticipants = null;
+
+
+// =====================================================
+// TOAST
+// =====================================================
+
+function toast(message){
+
+    const el =
+        document.getElementById("toast");
+
+    el.textContent =
+        message;
+
+    el.classList.add("show");
+
+    setTimeout(() => {
+
+        el.classList.remove("show");
+
+    },3000);
+}
+
+
+// =====================================================
+// PAGE NAVIGATION
+// =====================================================
+
+window.openPage = function(pageId){
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+
+            page.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById(pageId)
+        ?.classList.add("active");
+
+
+    document
+        .querySelector(
+            `.nav-btn[data-page="${pageId}"]`
+        )
+        ?.classList.add("active");
+
+};
+
+
+document
+    .querySelectorAll(".nav-btn")
+    .forEach(btn => {
+
+        btn.addEventListener("click",() => {
+
+            openPage(
+                btn.dataset.page
+            );
+
+        });
+
+    });
+
+
+// =====================================================
+// GOOGLE LOGIN
+// =====================================================
+
+googleLogin.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            await signInWithPopup(
+                auth,
+                googleProvider
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            toast(
+                "Login failed."
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// AUTH
+// =====================================================
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if(!user){
+
+            currentUser = null;
+
+            app.style.display =
+                "none";
+
+            loginScreen.style.display =
+                "flex";
+
+            return;
+        }
+
+
+        // ADMIN CHECK
+        if(
+            ADMIN_UID !== "YOUR_ADMIN_UID"
+            &&
+            user.uid !== ADMIN_UID
+        ){
+
+            toast(
+                "You are not authorized as admin."
+            );
+
+            await signOut(auth);
+
+            return;
+        }
+
+
+        currentUser =
+            user;
+
+
+        loginScreen.style.display =
+            "none";
+
+        app.style.display =
+            "block";
+
+
+        adminName.textContent =
+            user.displayName ||
+            "Admin";
+
+
+        adminPhoto.src =
+            user.photoURL ||
+            "https://ui-avatars.com/api/?name=Admin";
+
+
+        await loadDashboard();
+
+        loadLectures();
+
+    }
+);
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+logoutBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(liveStarted){
+
+            toast(
+                "पहले Live Class end करो."
+            );
+
+            return;
+        }
+
+
+        await signOut(auth);
+
+    }
+);
+
+
+// =====================================================
+// DASHBOARD
+// =====================================================
+
+async function loadDashboard(){
+
+    try{
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "recordedClasses"
+                )
+            );
+
+
+        recordedCount.textContent =
+            snapshot.size;
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    watchLiveStatus();
+
+}
+
+
+// =====================================================
+// LIVE STATUS
+// =====================================================
+
+function watchLiveStatus(){
+
+    if(unsubscribeLive){
+
+        unsubscribeLive();
+
+    }
+
+
+    const liveRef =
+        collection(
+            db,
+            "liveClasses"
+        );
+
+
+    unsubscribeLive =
+        onSnapshot(
+            liveRef,
+            snapshot => {
+
+                let active = null;
+
+
+                snapshot.forEach(
+                    item => {
+
+                        const data =
+                            item.data();
+
+
+                        if(
+                            data.status ===
+                            "live"
+                        ){
+
+                            active = {
+                                id:item.id,
+                                ...data
+                            };
+
+                        }
+
+                    }
+                );
+
+
+                if(active){
+
+                    liveStatus.textContent =
+                        "LIVE";
+
+                    liveStatus.style.color =
+                        "#22c55e";
+
+                }else{
+
+                    liveStatus.textContent =
+                        "Offline";
+
+                    liveStatus.style.color =
+                        "";
+
+                }
+
+            }
+        );
+
+}
+
+
+// =====================================================
+// START LIVE
+// =====================================================
+
+document
+    .getElementById("startLiveBtn")
+    .addEventListener(
+        "click",
+        startLive
+    );
+
+
+async function startLive(){
+
+    if(liveStarted){
+
+        toast(
+            "Live class already running."
+        );
+
+        return;
+    }
+
+
+    const title =
+        document
+        .getElementById("liveTitle")
+        .value
+        .trim();
+
+
+    const subject =
+        document
+        .getElementById("liveSubject")
+        .value;
+
+
+    const chapter =
+        document
+        .getElementById("liveChapter")
+        .value
+        .trim();
+
+
+    let roomId =
+        document
+        .getElementById("roomId")
+        .value
+        .trim();
+
+
+    if(!title){
+
+        toast(
+            "Class title डालो."
+        );
+
+        return;
+    }
+
+
+    if(!roomId){
+
+        roomId =
+            "room-" +
+            crypto.randomUUID()
+            .slice(0,8);
+
+        document
+            .getElementById("roomId")
+            .value =
+            roomId;
+    }
+
+
+    try{
+
+        const liveRef =
+            await addDoc(
+                collection(
+                    db,
+                    "liveClasses"
+                ),
+                {
+
+                    title,
+
+                    subject,
+
+                    chapter,
+
+                    roomId,
+
+                    teacherId:
+                        currentUser.uid,
+
+                    teacherName:
+                        currentUser.displayName ||
+                        "Teacher",
+
+                    status:
+                        "live",
+
+                    startedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+        liveDocId =
+            liveRef.id;
+
+        currentRoomId =
+            roomId;
+
+
+        // Start teacher camera
+
+
+
+        // Join WebRTC
+        await joinRoom(
+            roomId,
+            true,
+            null,
+            document.getElementById(
+                "localVideo"
+            )
+        );
+
+
+        liveStarted = true;
+
+
+        document
+            .getElementById("liveSetup")
+            .classList.add("hidden");
+
+
+        document
+            .getElementById("liveControl")
+            .classList.remove("hidden");
+
+
+        document
+            .getElementById("liveTitleDisplay")
+            .textContent =
+            title;
+
+
+        document
+            .getElementById("roomDisplay")
+            .textContent =
+            "Room: " + roomId;
+
+
+        document
+            .getElementById("studentRoomLink")
+            .textContent =
+            "Room ID: " + roomId;
+
+
+        toast(
+            "Live class started."
+        );
+
+
+        watchStudents();
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            "Live start failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// STUDENT COUNT
+// =====================================================
+
+function watchStudents(){
+
+    if(unsubscribeParticipants){
+
+        unsubscribeParticipants();
+
+    }
+
+
+    const ref =
+        collection(
+            db,
+            "liveClasses",
+            currentRoomId,
+            "participants"
+        );
+
+
+    unsubscribeParticipants =
+        onSnapshot(
+            ref,
+            snapshot => {
+
+                let count = 0;
+
+
+                snapshot.forEach(
+                    item => {
+
+                        if(
+                            item.id !==
+                            currentUser.uid
+                        ){
+
+                            count++;
+
+                        }
+
+                    }
+                );
+
+
+                studentCount.textContent =
+                    count;
+
+
+                document
+                    .getElementById(
+                        "liveStudentCount"
+                    )
+                    .textContent =
+                    count;
+
+            }
+        );
+
+}
+
+
+// =====================================================
+// MUTE
+// =====================================================
+
+document
+    .getElementById("muteBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const muted =
+                toggleMute();
+
+
+            document
+                .getElementById(
+                    "muteBtn"
+                )
+                .textContent =
+                muted
+                    ? "Mic OFF"
+                    : "Mic ON";
+
+
+            document
+                .getElementById(
+                    "micStatus"
+                )
+                .textContent =
+                muted
+                    ? "OFF"
+                    : "ON";
+
+
+            if(currentRoomId){
+
+                await updateParticipantStatus(
+                    {
+                        mic:!muted
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// CAMERA
+// =====================================================
+
+document
+    .getElementById("cameraBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const off =
+                toggleCamera();
+
+
+            document
+                .getElementById(
+                    "cameraBtn"
+                )
+                .textContent =
+                off
+                    ? "Camera OFF"
+                    : "Camera ON";
+
+
+            document
+                .getElementById(
+                    "cameraStatus"
+                )
+                .textContent =
+                off
+                    ? "OFF"
+                    : "ON";
+
+
+            document
+                .getElementById(
+                    "videoPlaceholder"
+                )
+                .classList.toggle(
+                    "hidden",
+                    !off
+                );
+
+
+            if(currentRoomId){
+
+                await updateParticipantStatus(
+                    {
+                        camera:!off
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// SWITCH CAMERA
+// =====================================================
+
+document
+    .getElementById(
+        "switchCameraBtn"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            try{
+
+                await switchCamera();
+
+                toast(
+                    "Camera switched."
+                );
+
+            }catch(error){
+
+                console.error(error);
+
+                toast(
+                    "Camera switch नहीं हो सका."
+                );
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// SCREEN SHARE
+// =====================================================
+
+document
+    .getElementById("screenBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            try{
+
+                if(screenSharing){
+
+                    await stopScreenShare();
+
+                    screenSharing =
+                        false;
+
+                    document
+                        .getElementById(
+                            "screenBtn"
+                        )
+                        .textContent =
+                        "Share Screen";
+
+                    toast(
+                        "Screen sharing stopped."
+                    );
+
+                }else{
+
+                    await startScreenShare();
+
+                    screenSharing =
+                        true;
+
+                    document
+                        .getElementById(
+                            "screenBtn"
+                        )
+                        .textContent =
+                        "Stop Screen";
+
+                    toast(
+                        "Screen sharing started."
+                    );
+
+                }
+
+            }catch(error){
+
+                console.error(error);
+
+                toast(
+                    "Screen sharing failed."
+                );
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// RECORDING
+// =====================================================
+
+document
+    .getElementById("recordBtn")
+    .addEventListener(
+        "click",
+        startRecording
+    );
+
+
+function startRecording(){
+
+    if(mediaRecorder){
+
+        return;
+    }
+
+
+    const video =
+        document.getElementById(
+            "localVideo"
+        );
+
+
+    const stream =
+        video.srcObject;
+
+
+    if(!stream){
+
+        toast(
+            "Video stream available नहीं है."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        recordedChunks = [];
+
+
+        mediaRecorder =
+            new MediaRecorder(
+                stream,
+                {
+                    mimeType:
+                        "video/webm;codecs=vp9,opus"
+                }
+            );
+
+
+    }catch{
+
+        mediaRecorder =
+            new MediaRecorder(
+                stream
+            );
+
+    }
+
+
+    mediaRecorder.ondataavailable =
+        event => {
+
+            if(
+                event.data &&
+                event.data.size > 0
+            ){
+
+                recordedChunks.push(
+                    event.data
+                );
+
+            }
+
+        };
+
+
+    mediaRecorder.onstop =
+        () => {
+
+            recordingBlob =
+                new Blob(
+                    recordedChunks,
+                    {
+                        type:
+                            "video/webm"
+                    }
+                );
+
+
+            document
+                .getElementById(
+                    "downloadBtn"
+                )
+                .classList.remove(
+                    "hidden"
+                );
+
+
+            mediaRecorder =
+                null;
+
+        };
+
+
+    mediaRecorder.start(
+        1000
+    );
+
+
+    document
+        .getElementById(
+            "recordBtn"
+        )
+        .textContent =
+        "Stop Recording";
+
+
+    document
+        .getElementById(
+            "recordStatus"
+        )
+        .textContent =
+        "ON";
+
+
+    document
+        .getElementById(
+            "recordBtn"
+        )
+        .onclick =
+        stopRecording;
+
+}
+
+
+function stopRecording(){
+
+    if(!mediaRecorder){
+
+        return;
+    }
+
+
+    mediaRecorder.stop();
+
+
+    document
+        .getElementById(
+            "recordBtn"
+        )
+        .textContent =
+        "Start Recording";
+
+
+    document
+        .getElementById(
+            "recordStatus"
+        )
+        .textContent =
+        "OFF";
+
+
+    document
+        .getElementById(
+            "recordBtn"
+        )
+        .onclick =
+        startRecording;
+
+}
+
+
+// =====================================================
+// DOWNLOAD RECORDING
+// =====================================================
+
+document
+    .getElementById(
+        "downloadBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!recordingBlob){
+
+                toast(
+                    "Recording available नहीं है."
+                );
+
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    recordingBlob
+                );
+
+
+            const a =
+                document.createElement(
+                    "a"
+                );
+
+
+            a.href =
+                url;
+
+
+            const safeTitle =
+                (
+                    document
+                    .getElementById(
+                        "liveTitle"
+                    )
+                    .value
+                    .trim()
+                    .replace(
+                        /[^a-z0-9]+/gi,
+                        "-"
+                    )
+                    .toLowerCase()
+                ) ||
+                "live-class";
+
+
+            a.download =
+                safeTitle +
+                "-" +
+                Date.now() +
+                ".webm";
+
+
+            document.body.appendChild(a);
+
+            a.click();
+
+            a.remove();
+
+
+            setTimeout(
+                () =>
+                    URL.revokeObjectURL(url),
+                1000
+            );
+
+
+            toast(
+                "Recording download started."
+            );
+
+        }
+    );
+
+
+// =====================================================
+// COPY ROOM
+// =====================================================
+
+document
+    .getElementById(
+        "copyRoomBtn"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            if(!currentRoomId){
+
+                toast(
+                    "Room ID नहीं है."
+                );
+
+                return;
+            }
+
+
+            try{
+
+                await navigator.clipboard.writeText(
+                    currentRoomId
+                );
+
+
+                toast(
+                    "Room ID copied."
+                );
+
+            }catch{
+
+                toast(
+                    "Copy failed."
+                );
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// END LIVE MODAL
+// =====================================================
+
+const confirmModal =
+    document.getElementById(
+        "confirmModal"
+    );
+
+
+document
+    .getElementById(
+        "endLiveBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            confirmModal.classList.add(
+                "show"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "cancelEndBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            confirmModal.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "confirmEndBtn"
+    )
+    .addEventListener(
+        "click",
+        endLive
+    );
+
+
+// =====================================================
+// END LIVE
+// =====================================================
+
+async function endLive(){
+
+    confirmModal.classList.remove(
+        "show"
+    );
+
+
+    try{
+
+        if(mediaRecorder){
+
+            stopRecording();
+
+        }
+
+
+        if(screenSharing){
+
+            await stopScreenShare();
+
+            screenSharing =
+                false;
+
+        }
+
+
+        await leaveRoom();
+
+
+        if(liveDocId){
+
+            await updateDoc(
+                doc(
+                    db,
+                    "liveClasses",
+                    liveDocId
+                ),
+                {
+
+                    status:
+                        "ended",
+
+                    endedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+        }
+
+
+        if(unsubscribeParticipants){
+
+            unsubscribeParticipants();
+
+            unsubscribeParticipants =
+                null;
+
+        }
+
+
+        liveStarted =
+            false;
+
+        currentRoomId =
+            null;
+
+        liveDocId =
+            null;
+
+
+        document
+            .getElementById(
+                "liveControl"
+            )
+            .classList.add(
+                "hidden"
+            );
+
+
+        document
+            .getElementById(
+                "liveSetup"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+
+        document
+            .getElementById(
+                "localVideo"
+            )
+            .srcObject =
+            null;
+
+
+        studentCount.textContent =
+            "0";
+
+
+        document
+            .getElementById(
+                "liveStudentCount"
+            )
+            .textContent =
+            "0";
+
+
+        toast(
+            "Live class ended."
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            "Could not end live class."
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ADD RECORDED LECTURE
+// =====================================================
+
+document
+    .getElementById(
+        "addLectureBtn"
+    )
+    .addEventListener(
+        "click",
+        addLecture
+    );
+
+
+async function addLecture(){
+
+    const title =
+        document
+        .getElementById(
+            "lectureTitle"
+        )
+        .value
+        .trim();
+
+
+    const subject =
+        document
+        .getElementById(
+            "lectureSubject"
+        )
+        .value;
+
+
+    const chapter =
+        document
+        .getElementById(
+            "lectureChapter"
+        )
+        .value
+        .trim();
+
+
+    const thumbnail =
+        document
+        .getElementById(
+            "lectureThumbnail"
+        )
+        .value
+        .trim();
+
+
+    const videoUrl =
+        document
+        .getElementById(
+            "lectureVideo"
+        )
+        .value
+        .trim();
+
+
+    const description =
+        document
+        .getElementById(
+            "lectureDescription"
+        )
+        .value
+        .trim();
+
+
+    if(!title){
+
+        toast(
+            "Lecture title डालो."
+        );
+
+        return;
+    }
+
+
+    if(!videoUrl){
+
+        toast(
+            "Video URL डालो."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await addDoc(
+            collection(
+                db,
+                "recordedClasses"
+            ),
+            {
+
+                title,
+
+                subject,
+
+                chapter,
+
+                thumbnail,
+
+                videoUrl,
+
+                description,
+
+                createdBy:
+                    currentUser.uid,
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        document
+            .getElementById(
+                "lectureTitle"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "lectureChapter"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "lectureThumbnail"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "lectureVideo"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "lectureDescription"
+            )
+            .value = "";
+
+
+        toast(
+            "Lecture added successfully."
+        );
+
+
+        loadLectures();
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            "Lecture add failed."
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// LOAD LECTURES
+// =====================================================
+
+async function loadLectures(){
+
+    try{
+
+        const q =
+            query(
+                collection(
+                    db,
+                    "recordedClasses"
+                ),
+                orderBy(
+                    "createdAt",
+                    "desc"
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+        const table =
+            document.getElementById(
+                "lectureTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        recordedCount.textContent =
+            snapshot.size;
+
+
+        if(snapshot.empty){
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="5"
+                        style="text-align:center;color:#8e9aae">
+                        No lectures added yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        snapshot.forEach(
+            item => {
+
+                const data =
+                    item.data();
+
+
+                let date =
+                    "—";
+
+
+                if(
+                    data.createdAt &&
+                    data.createdAt.toDate
+                ){
+
+                    date =
+                        data.createdAt
+                            .toDate()
+                            .toLocaleDateString();
+
+                }
+
+
+                const tr =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                tr.innerHTML = `
+
+                    <td>
+                        ${escapeHTML(
+                            data.title || "Untitled"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            data.subject || "—"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            data.chapter || "—"
+                        )}
+                    </td>
+
+                    <td>
+                        ${date}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="action-btn delete"
+                            data-id="${item.id}"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                tr
+                    .querySelector(
+                        ".delete"
+                    )
+                    .addEventListener(
+                        "click",
+                        () =>
+                            deleteLecture(
+                                item.id
+                            )
+                    );
+
+
+                table.appendChild(tr);
+
+            }
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            "Lectures load नहीं हो सके."
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// DELETE LECTURE
+// =====================================================
+
+async function deleteLecture(id){
+
+    const ok =
+        confirm(
+            "Delete this lecture?"
+        );
+
+
+    if(!ok){
+        return;
+    }
+
+
+    try{
+
+        await deleteDoc(
+            doc(
+                db,
+                "recordedClasses",
+                id
+            )
+        );
+
+
+        toast(
+            "Lecture deleted."
+        );
+
+
+        loadLectures();
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            "Delete failed."
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+// =====================================================
+// CLEANUP BEFORE PAGE CLOSE
+// =====================================================
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if(liveStarted){
+
+            // Browser unload cannot reliably await
+            // Firebase operations.
+
+            try{
+
+                leaveRoom();
+
+            }catch{}
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

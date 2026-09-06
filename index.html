@@ -1,0 +1,1589 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#0b1020"
+>
+
+<meta
+    name="description"
+    content="LiveClass — Premium online learning platform"
+>
+
+<title>LiveClass — Learn Without Limits</title>
+
+
+<!-- Google Font -->
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+
+<style>
+
+    /* =====================================
+       RESET
+    ===================================== */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+
+    :root {
+
+        --bg:
+            #070b16;
+
+        --bg-soft:
+            #0b1020;
+
+        --card:
+            rgba(255,255,255,0.06);
+
+        --card-border:
+            rgba(255,255,255,0.10);
+
+        --text:
+            #ffffff;
+
+        --muted:
+            #9ca3af;
+
+        --primary:
+            #6366f1;
+
+        --primary-light:
+            #818cf8;
+
+        --success:
+            #22c55e;
+
+        --danger:
+            #ef4444;
+
+        --shadow:
+            0 30px 80px
+            rgba(0,0,0,.35);
+
+    }
+
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+
+    body {
+
+        min-height: 100vh;
+
+        font-family:
+            "Inter",
+            Arial,
+            sans-serif;
+
+        color:
+            var(--text);
+
+        background:
+            var(--bg);
+
+        overflow-x: hidden;
+
+    }
+
+
+    button,
+    input {
+        font-family: inherit;
+    }
+
+
+    button {
+        border: none;
+    }
+
+
+    /* =====================================
+       BACKGROUND
+    ===================================== */
+
+    .background {
+
+        position: fixed;
+
+        inset: 0;
+
+        overflow: hidden;
+
+        pointer-events: none;
+
+        z-index: -1;
+
+        background:
+            radial-gradient(
+                circle at 10% 10%,
+                rgba(99,102,241,.20),
+                transparent 32%
+            ),
+
+            radial-gradient(
+                circle at 90% 20%,
+                rgba(129,140,248,.14),
+                transparent 30%
+            ),
+
+            radial-gradient(
+                circle at 50% 100%,
+                rgba(59,130,246,.10),
+                transparent 35%
+            );
+
+    }
+
+
+    .orb {
+
+        position: absolute;
+
+        border-radius: 50%;
+
+        filter: blur(90px);
+
+        opacity: .35;
+
+    }
+
+
+    .orb.one {
+
+        width: 260px;
+
+        height: 260px;
+
+        background:
+            #4f46e5;
+
+        top: -100px;
+
+        left: -80px;
+
+    }
+
+
+    .orb.two {
+
+        width: 300px;
+
+        height: 300px;
+
+        background:
+            #2563eb;
+
+        right: -120px;
+
+        top: 30%;
+
+    }
+
+
+    .orb.three {
+
+        width: 240px;
+
+        height: 240px;
+
+        background:
+            #7c3aed;
+
+        bottom: -100px;
+
+        left: 35%;
+
+    }
+
+
+    /* =====================================
+       NAVBAR
+    ===================================== */
+
+    .navbar {
+
+        width: 100%;
+
+        height: 74px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding:
+            0 6%;
+
+        border-bottom:
+            1px solid
+            rgba(255,255,255,.07);
+
+        background:
+            rgba(7,11,22,.65);
+
+        backdrop-filter:
+            blur(20px);
+
+        position:
+            sticky;
+
+        top: 0;
+
+        z-index: 100;
+
+    }
+
+
+    .brand {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+
+    }
+
+
+    .brand-icon {
+
+        width: 38px;
+
+        height: 38px;
+
+        display: grid;
+
+        place-items: center;
+
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #6366f1,
+                #8b5cf6
+            );
+
+        box-shadow:
+            0 8px 25px
+            rgba(99,102,241,.35);
+
+        font-size: 17px;
+
+        font-weight: 800;
+
+    }
+
+
+    .brand-name {
+
+        font-size: 18px;
+
+        font-weight: 800;
+
+        letter-spacing: -.5px;
+
+    }
+
+
+    .brand-name span {
+
+        color:
+            var(--primary-light);
+
+    }
+
+
+    .nav-status {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        font-size: 12px;
+
+        color:
+            #a5f3fc;
+
+    }
+
+
+    .status-dot {
+
+        width: 7px;
+
+        height: 7px;
+
+        border-radius: 50%;
+
+        background:
+            var(--success);
+
+        box-shadow:
+            0 0 12px
+            var(--success);
+
+    }
+
+
+    /* =====================================
+       MAIN
+    ===================================== */
+
+    .page {
+
+        width:
+            min(
+                1200px,
+                92%
+            );
+
+        min-height:
+            calc(
+                100vh - 74px
+            );
+
+        margin:
+            auto;
+
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr 430px;
+
+        align-items:
+            center;
+
+        gap:
+            70px;
+
+        padding:
+            70px 0;
+
+    }
+
+
+    /* =====================================
+       LEFT CONTENT
+    ===================================== */
+
+    .hero {
+
+        max-width:
+            650px;
+
+    }
+
+
+    .eyebrow {
+
+        display:
+            inline-flex;
+
+        align-items:
+            center;
+
+        gap:
+            8px;
+
+        padding:
+            8px 13px;
+
+        border:
+            1px solid
+            rgba(129,140,248,.22);
+
+        border-radius:
+            999px;
+
+        background:
+            rgba(99,102,241,.08);
+
+        color:
+            #c7d2fe;
+
+        font-size:
+            12px;
+
+        font-weight:
+            600;
+
+        margin-bottom:
+            25px;
+
+    }
+
+
+    .eyebrow span {
+
+        width:
+            6px;
+
+        height:
+            6px;
+
+        border-radius:
+            50%;
+
+        background:
+            #818cf8;
+
+        box-shadow:
+            0 0 10px
+            #818cf8;
+
+    }
+
+
+    .hero h1 {
+
+        font-size:
+            clamp(
+                42px,
+                6vw,
+                76px
+            );
+
+        line-height:
+            1.02;
+
+        letter-spacing:
+            -3.5px;
+
+        font-weight:
+            800;
+
+        margin-bottom:
+            25px;
+
+    }
+
+
+    .gradient-text {
+
+        background:
+            linear-gradient(
+                90deg,
+                #818cf8,
+                #a78bfa,
+                #60a5fa
+            );
+
+        -webkit-background-clip:
+            text;
+
+        background-clip:
+            text;
+
+        color:
+            transparent;
+
+    }
+
+
+    .hero-description {
+
+        max-width:
+            570px;
+
+        color:
+            var(--muted);
+
+        font-size:
+            16px;
+
+        line-height:
+            1.8;
+
+        margin-bottom:
+            32px;
+
+    }
+
+
+    /* =====================================
+       FEATURES
+    ===================================== */
+
+    .features {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                1fr
+            );
+
+        gap:
+            12px;
+
+        max-width:
+            620px;
+
+    }
+
+
+    .feature {
+
+        padding:
+            16px;
+
+        border:
+            1px solid
+            rgba(255,255,255,.07);
+
+        background:
+            rgba(255,255,255,.035);
+
+        border-radius:
+            14px;
+
+    }
+
+
+    .feature-icon {
+
+        font-size:
+            18px;
+
+        margin-bottom:
+            9px;
+
+    }
+
+
+    .feature strong {
+
+        display:
+            block;
+
+        font-size:
+            13px;
+
+        margin-bottom:
+            4px;
+
+    }
+
+
+    .feature span {
+
+        color:
+            #737b8d;
+
+        font-size:
+            11px;
+
+        line-height:
+            1.4;
+
+    }
+
+
+    /* =====================================
+       LOGIN CARD
+    ===================================== */
+
+    .login-wrapper {
+
+        position:
+            relative;
+
+    }
+
+
+    .login-glow {
+
+        position:
+            absolute;
+
+        inset:
+            -20px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(99,102,241,.28),
+                rgba(139,92,246,.12)
+            );
+
+        filter:
+            blur(45px);
+
+        border-radius:
+            40px;
+
+        z-index:
+            -1;
+
+    }
+
+
+    .login-card {
+
+        width:
+            100%;
+
+        padding:
+            35px;
+
+        border:
+            1px solid
+            var(--card-border);
+
+        border-radius:
+            25px;
+
+        background:
+            rgba(17,24,39,.78);
+
+        backdrop-filter:
+            blur(25px);
+
+        box-shadow:
+            var(--shadow);
+
+    }
+
+
+    .login-header {
+
+        margin-bottom:
+            30px;
+
+    }
+
+
+    .login-header h2 {
+
+        font-size:
+            26px;
+
+        margin-bottom:
+            8px;
+
+        letter-spacing:
+            -.8px;
+
+    }
+
+
+    .login-header p {
+
+        color:
+            var(--muted);
+
+        font-size:
+            13px;
+
+        line-height:
+            1.6;
+
+    }
+
+
+    /* =====================================
+       GOOGLE BUTTON
+    ===================================== */
+
+    .google-btn {
+
+        width:
+            100%;
+
+        min-height:
+            52px;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            center;
+
+        gap:
+            12px;
+
+        cursor:
+            pointer;
+
+        border:
+            1px solid
+            rgba(255,255,255,.12);
+
+        border-radius:
+            13px;
+
+        color:
+            #111827;
+
+        background:
+            #ffffff;
+
+        font-size:
+            14px;
+
+        font-weight:
+            600;
+
+        transition:
+            .25s ease;
+
+    }
+
+
+    .google-btn:hover {
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 15px 35px
+            rgba(0,0,0,.25);
+
+    }
+
+
+    .google-btn:active {
+
+        transform:
+            translateY(0);
+
+    }
+
+
+    .google-btn.loading {
+
+        opacity:
+            .7;
+
+        pointer-events:
+            none;
+
+    }
+
+
+    .google-icon {
+
+        width:
+            21px;
+
+        height:
+            21px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        font-size:
+            17px;
+
+        font-weight:
+            800;
+
+    }
+
+
+    /* =====================================
+       LOGIN STATUS
+    ===================================== */
+
+    .login-status {
+
+        min-height:
+            22px;
+
+        margin-top:
+            15px;
+
+        font-size:
+            12px;
+
+        text-align:
+            center;
+
+        color:
+            var(--muted);
+
+    }
+
+
+    .login-status.error {
+
+        color:
+            #fca5a5;
+
+    }
+
+
+    .login-status.success {
+
+        color:
+            #86efac;
+
+    }
+
+
+    /* =====================================
+       SECURITY
+    ===================================== */
+
+    .security {
+
+        display:
+            flex;
+
+        align-items:
+            flex-start;
+
+        gap:
+            10px;
+
+        margin-top:
+            25px;
+
+        padding-top:
+            20px;
+
+        border-top:
+            1px solid
+            rgba(255,255,255,.07);
+
+        color:
+            #6b7280;
+
+        font-size:
+            11px;
+
+        line-height:
+            1.6;
+
+    }
+
+
+    .security-icon {
+
+        flex:
+            0 0 auto;
+
+        width:
+            26px;
+
+        height:
+            26px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        border-radius:
+            8px;
+
+        background:
+            rgba(34,197,94,.1);
+
+        color:
+            #86efac;
+
+    }
+
+
+    /* =====================================
+       LOADING SCREEN
+    ===================================== */
+
+    .loading-screen {
+
+        position:
+            fixed;
+
+        inset:
+            0;
+
+        z-index:
+            9999;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            center;
+
+        background:
+            #070b16;
+
+        transition:
+            opacity .4s ease,
+            visibility .4s ease;
+
+    }
+
+
+    .loading-screen.hide {
+
+        opacity:
+            0;
+
+        visibility:
+            hidden;
+
+    }
+
+
+    .loader {
+
+        width:
+            44px;
+
+        height:
+            44px;
+
+        border:
+            3px solid
+            rgba(255,255,255,.1);
+
+        border-top-color:
+            #818cf8;
+
+        border-radius:
+            50%;
+
+        animation:
+            spin .8s linear infinite;
+
+    }
+
+
+    @keyframes spin {
+
+        to {
+            transform:
+                rotate(360deg);
+        }
+
+    }
+
+
+    /* =====================================
+       FOOTER
+    ===================================== */
+
+    .footer {
+
+        position:
+            fixed;
+
+        bottom:
+            18px;
+
+        left:
+            6%;
+
+        color:
+            #4b5563;
+
+        font-size:
+            10px;
+
+    }
+
+
+    /* =====================================
+       RESPONSIVE
+    ===================================== */
+
+    @media(max-width:900px) {
+
+        .page {
+
+            grid-template-columns:
+                1fr;
+
+            gap:
+                50px;
+
+            padding:
+                55px 0 90px;
+
+        }
+
+
+        .hero {
+
+            max-width:
+                700px;
+
+            text-align:
+                center;
+
+            margin:
+                auto;
+
+        }
+
+
+        .eyebrow {
+
+            margin-left:
+                auto;
+
+            margin-right:
+                auto;
+
+        }
+
+
+        .hero-description {
+
+            margin-left:
+                auto;
+
+            margin-right:
+                auto;
+
+        }
+
+
+        .features {
+
+            margin:
+                auto;
+
+        }
+
+
+        .login-wrapper {
+
+            width:
+                min(
+                    430px,
+                    100%
+                );
+
+            margin:
+                auto;
+
+        }
+
+
+        .footer {
+
+            display:
+                none;
+
+        }
+
+    }
+
+
+    @media(max-width:600px) {
+
+        .navbar {
+
+            padding:
+                0 18px;
+
+        }
+
+
+        .nav-status {
+
+            display:
+                none;
+
+        }
+
+
+        .page {
+
+            width:
+                90%;
+
+            padding-top:
+                40px;
+
+        }
+
+
+        .hero h1 {
+
+            font-size:
+                43px;
+
+            letter-spacing:
+                -2px;
+
+        }
+
+
+        .hero-description {
+
+            font-size:
+                14px;
+
+        }
+
+
+        .features {
+
+            grid-template-columns:
+                1fr;
+
+        }
+
+
+        .login-card {
+
+            padding:
+                25px 20px;
+
+            border-radius:
+                20px;
+
+        }
+
+    }
+
+</style>
+
+</head><body><!-- ======================================
+     BACKGROUND
+======================================= --><div class="background"><div class="orb one"></div>
+
+<div class="orb two"></div>
+
+<div class="orb three"></div>
+
+</div><!-- ======================================
+     LOADING SCREEN
+======================================= --><div
+    id="loadingScreen"
+    class="loading-screen"
+><div class="loader"></div>
+
+</div><!-- ======================================
+     NAVBAR
+======================================= --><header class="navbar"><div class="brand">
+
+    <div class="brand-icon">
+        L
+    </div>
+
+    <div class="brand-name">
+        Live<span>Class</span>
+    </div>
+
+</div>
+
+
+<div class="nav-status">
+
+    <span class="status-dot"></span>
+
+    Learning platform online
+
+</div>
+
+</header><!-- ======================================
+     MAIN
+======================================= --><main class="page"><!-- ==================================
+     HERO
+=================================== -->
+
+<section class="hero">
+
+    <div class="eyebrow">
+
+        <span></span>
+
+        Premium Learning Experience
+
+    </div>
+
+
+    <h1>
+
+        Learn smarter.
+
+        <br>
+
+        <span class="gradient-text">
+            Learn anywhere.
+        </span>
+
+    </h1>
+
+
+    <p class="hero-description">
+
+        Join live classes, watch recorded lectures,
+        and continue your learning journey from
+        any device — all in one place.
+
+    </p>
+
+
+    <div class="features">
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ◉
+            </div>
+
+            <strong>
+                Live Classes
+            </strong>
+
+            <span>
+                Learn directly with your teacher.
+            </span>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ▶
+            </div>
+
+            <strong>
+                Recorded
+            </strong>
+
+            <span>
+                Watch lectures whenever you want.
+            </span>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <strong>
+                Your Progress
+            </strong>
+
+            <span>
+                Keep your learning organized.
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- ==================================
+     LOGIN
+=================================== -->
+
+<section class="login-wrapper">
+
+    <div class="login-glow"></div>
+
+
+    <div class="login-card">
+
+
+        <div class="login-header">
+
+            <h2>
+                Welcome back
+            </h2>
+
+            <p>
+                Sign in to access your classes
+                and learning dashboard.
+            </p>
+
+        </div>
+
+
+        <button
+            id="googleLogin"
+            class="google-btn"
+        >
+
+            <span class="google-icon">
+                G
+            </span>
+
+            <span id="googleText">
+                Continue with Google
+            </span>
+
+        </button>
+
+
+        <div
+            id="loginStatus"
+            class="login-status"
+        ></div>
+
+
+        <div class="security">
+
+            <div class="security-icon">
+                ✓
+            </div>
+
+            <div>
+                Your account is securely
+                authenticated through Google.
+                We never store your Google password.
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+</main><div class="footer">© 2026 LiveClass · Secure Learning Platform
+
+</div><!-- ======================================
+     FIREBASE LOGIN
+======================================= --><script type="module">
+
+import {
+
+    auth,
+
+    googleProvider,
+
+    signInWithPopup,
+
+    onAuthStateChanged
+
+} from "./firebase.js";
+
+
+const loadingScreen =
+    document.getElementById(
+        "loadingScreen"
+    );
+
+
+const googleLogin =
+    document.getElementById(
+        "googleLogin"
+    );
+
+
+const googleText =
+    document.getElementById(
+        "googleText"
+    );
+
+
+const loginStatus =
+    document.getElementById(
+        "loginStatus"
+    );
+
+
+// ========================================
+// HIDE LOADING
+// ========================================
+
+function hideLoading() {
+
+    setTimeout(() => {
+
+        loadingScreen.classList.add(
+            "hide"
+        );
+
+    }, 350);
+
+}
+
+
+// ========================================
+// CHECK AUTH
+// ========================================
+
+onAuthStateChanged(
+    auth,
+    user => {
+
+        if(user) {
+
+            window.location.href =
+                "home.html";
+
+            return;
+
+        }
+
+        hideLoading();
+
+    }
+);
+
+
+// ========================================
+// GOOGLE LOGIN
+// ========================================
+
+googleLogin.addEventListener(
+    "click",
+    async () => {
+
+        googleLogin.classList.add(
+            "loading"
+        );
+
+
+        googleText.textContent =
+            "Signing you in...";
+
+
+        loginStatus.textContent =
+            "Opening secure Google sign-in...";
+
+
+        loginStatus.className =
+            "login-status";
+
+
+        try {
+
+            await signInWithPopup(
+                auth,
+                googleProvider
+            );
+
+
+            loginStatus.textContent =
+                "Login successful. Redirecting...";
+
+
+            loginStatus.className =
+                "login-status success";
+
+
+            googleText.textContent =
+                "Login successful";
+
+
+        } catch(error) {
+
+            console.error(
+                "Google Login Error:",
+                error
+            );
+
+
+            googleLogin.classList.remove(
+                "loading"
+            );
+
+
+            googleText.textContent =
+                "Continue with Google";
+
+
+            let message =
+                "Unable to sign in. Please try again.";
+
+
+            if(
+                error.code ===
+                "auth/popup-closed-by-user"
+            ) {
+
+                message =
+                    "Sign-in window was closed.";
+
+            }
+
+
+            if(
+                error.code ===
+                "auth/popup-blocked"
+            ) {
+
+                message =
+                    "Popup was blocked by your browser.";
+
+            }
+
+
+            if(
+                error.code ===
+                "auth/network-request-failed"
+            ) {
+
+                message =
+                    "Network error. Check your internet connection.";
+
+            }
+
+
+            loginStatus.textContent =
+                message;
+
+
+            loginStatus.className =
+                "login-status error";
+
+        }
+
+    }
+);
+
+</script></body></html>

@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LiveClass — Classes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#070b14;
+    --card:#0d1320;
+    --card2:#111827;
+    --border:rgba(255,255,255,.08);
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --primary:#6366f1;
+    --secondary:#8b5cf6;
+    --red:#ef4444;
+}
+
+body{
+    font-family:"Inter",sans-serif;
+    background:
+        radial-gradient(circle at 10% 0%,rgba(99,102,241,.15),transparent 30%),
+        radial-gradient(circle at 90% 10%,rgba(139,92,246,.12),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+button,input,select{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+/* LOADING */
+
+#loading{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:#070b14;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:16px;
+    transition:.4s;
+}
+
+.logoLoader{
+    width:58px;
+    height:58px;
+    border-radius:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:22px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    box-shadow:0 0 40px rgba(99,102,241,.4);
+}
+
+.spinner{
+    width:32px;
+    height:32px;
+    border:3px solid rgba(255,255,255,.1);
+    border-top-color:#818cf8;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+/* HEADER */
+
+header{
+    height:72px;
+    position:sticky;
+    top:0;
+    z-index:100;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 5%;
+
+    background:rgba(7,11,20,.78);
+    backdrop-filter:blur(20px);
+
+    border-bottom:1px solid var(--border);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:19px;
+    font-weight:800;
+}
+
+.brandLogo{
+    width:39px;
+    height:39px;
+    border-radius:12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+
+    box-shadow:0 8px 25px rgba(99,102,241,.3);
+}
+
+.headerRight{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.homeBtn{
+    padding:9px 14px;
+    border-radius:11px;
+
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.profile img{
+    width:39px;
+    height:39px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,.1);
+}
+
+.profileName{
+    font-size:12px;
+    font-weight:700;
+}
+
+/* MAIN */
+
+main{
+    width:min(1400px,90%);
+    margin:auto;
+    padding:42px 0 80px;
+}
+
+.heading{
+    margin-bottom:28px;
+}
+
+.heading h1{
+    font-size:clamp(28px,4vw,43px);
+    letter-spacing:-1.5px;
+    margin-bottom:9px;
+}
+
+.gradient{
+    background:linear-gradient(90deg,#818cf8,#a78bfa,#c084fc);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.heading p{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* CONTROLS */
+
+.controls{
+    display:flex;
+    gap:12px;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+}
+
+.search{
+    flex:1;
+    min-width:230px;
+    position:relative;
+}
+
+.search input{
+    width:100%;
+    height:48px;
+
+    padding:0 16px 0 43px;
+
+    border-radius:14px;
+
+    border:1px solid var(--border);
+    outline:none;
+
+    background:rgba(255,255,255,.045);
+    color:white;
+}
+
+.search input:focus{
+    border-color:rgba(129,140,248,.6);
+    box-shadow:0 0 0 3px rgba(99,102,241,.1);
+}
+
+.searchIcon{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+}
+
+.filter{
+    height:48px;
+    min-width:160px;
+
+    padding:0 14px;
+
+    border-radius:14px;
+
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.045);
+    color:#cbd5e1;
+
+    outline:none;
+}
+
+.filter option{
+    background:#111827;
+}
+
+/* COUNT */
+
+.resultBar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:17px;
+}
+
+.resultCount{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* GRID */
+
+.classGrid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.card{
+    overflow:hidden;
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.02)
+        );
+
+    border:1px solid var(--border);
+
+    transition:.25s;
+
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(129,140,248,.28);
+    box-shadow:0 22px 55px rgba(0,0,0,.3);
+}
+
+.thumbnailWrap{
+    height:190px;
+    position:relative;
+    overflow:hidden;
+    background:#111827;
+}
+
+.thumbnail{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.4s;
+}
+
+.card:hover .thumbnail{
+    transform:scale(1.04);
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.65),
+        transparent 55%
+    );
+}
+
+.playButton{
+    position:absolute;
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:54px;
+    height:54px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(99,102,241,.9);
+
+    box-shadow:0 10px 35px rgba(0,0,0,.35);
+
+    opacity:.95;
+}
+
+.badge{
+    position:absolute;
+    top:12px;
+    left:12px;
+
+    padding:6px 9px;
+
+    border-radius:8px;
+
+    background:rgba(7,11,20,.75);
+    backdrop-filter:blur(8px);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    font-size:9px;
+    font-weight:700;
+}
+
+.cardBody{
+    padding:17px;
+}
+
+.cardTitle{
+    font-size:14px;
+    line-height:1.4;
+    font-weight:700;
+
+    margin-bottom:10px;
+
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+
+.meta{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    color:var(--muted);
+    font-size:10px;
+
+    margin-bottom:14px;
+}
+
+.watchBtn{
+    width:100%;
+    height:38px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(99,102,241,.2);
+
+    background:rgba(99,102,241,.1);
+
+    color:#a5b4fc;
+
+    font-size:11px;
+    font-weight:700;
+
+    transition:.2s;
+}
+
+.watchBtn:hover{
+    background:rgba(99,102,241,.18);
+}
+
+/* EMPTY */
+
+.empty{
+    grid-column:1/-1;
+
+    min-height:300px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    border:1px dashed var(--border);
+    border-radius:22px;
+
+    color:var(--muted);
+}
+
+.emptyIcon{
+    font-size:38px;
+    margin-bottom:15px;
+}
+
+.empty strong{
+    color:#cbd5e1;
+    margin-bottom:6px;
+}
+
+/* VIDEO MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+
+    background:rgba(0,0,0,.82);
+
+    backdrop-filter:blur(12px);
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.videoBox{
+    width:min(1050px,100%);
+    background:#090e18;
+
+    border:1px solid var(--border);
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 30px 100px rgba(0,0,0,.7);
+
+    animation:modalIn .2s ease;
+}
+
+@keyframes modalIn{
+    from{
+        opacity:0;
+        transform:scale(.97);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.videoHeader{
+    height:62px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 17px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.videoTitle{
+    font-size:13px;
+    font-weight:700;
+
+    max-width:80%;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.close{
+    width:36px;
+    height:36px;
+
+    border-radius:10px;
+
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.05);
+
+    color:#cbd5e1;
+
+    font-size:18px;
+}
+
+.player{
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+}
+
+.player iframe{
+    width:100%;
+    height:100%;
+    border:0;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+
+    transform:translate(-50%,20px);
+
+    background:#151c2a;
+
+    border:1px solid var(--border);
+
+    padding:12px 17px;
+
+    border-radius:12px;
+
+    font-size:12px;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:2000;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* MOBILE NAV */
+
+.bottomNav{
+    display:none;
+}
+
+@media(max-width:1000px){
+    .classGrid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px){
+
+    header{
+        padding:0 16px;
+    }
+
+    .profileName{
+        display:none;
+    }
+
+    .homeBtn{
+        font-size:10px;
+        padding:8px 11px;
+    }
+
+    main{
+        width:calc(100% - 28px);
+        padding:30px 0 95px;
+    }
+
+    .heading h1{
+        font-size:30px;
+    }
+
+    .controls{
+        flex-direction:column;
+    }
+
+    .filter{
+        width:100%;
+    }
+
+    .classGrid{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .thumbnailWrap{
+        height:200px;
+    }
+
+    .bottomNav{
+        position:fixed;
+        display:flex;
+
+        left:15px;
+        right:15px;
+        bottom:12px;
+
+        height:62px;
+
+        z-index:3000;
+
+        align-items:center;
+        justify-content:space-around;
+
+        background:rgba(13,19,32,.9);
+        backdrop-filter:blur(20px);
+
+        border:1px solid var(--border);
+        border-radius:19px;
+
+        box-shadow:0 20px 50px rgba(0,0,0,.5);
+    }
+
+    .navItem{
+        color:var(--muted);
+        text-align:center;
+        font-size:9px;
+        cursor:pointer;
+    }
+
+    .navItem.active{
+        color:#a5b4fc;
+    }
+
+    .navIcon{
+        font-size:18px;
+        margin-bottom:3px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+
+<div id="loading">
+
+    <div class="logoLoader">
+        LC
+    </div>
+
+    <div class="spinner"></div>
+
+</div>
+
+
+<!-- HEADER -->
+
+<header>
+
+    <a href="home.html" class="brand">
+
+        <div class="brandLogo">
+            LC
+        </div>
+
+        <span>LiveClass</span>
+
+    </a>
+
+
+    <div class="headerRight">
+
+        <a href="home.html" class="homeBtn">
+            ← Dashboard
+        </a>
+
+        <div class="profile">
+
+            <img
+                id="userPhoto"
+                src="https://via.placeholder.com/100"
+                alt="Profile"
+            >
+
+            <span
+                class="profileName"
+                id="userName">
+                Student
+            </span>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main>
+
+    <section class="heading">
+
+        <h1>
+            Recorded <span class="gradient">Classes</span>
+        </h1>
+
+        <p>
+            Learn at your own pace with your recorded lectures.
+        </p>
+
+    </section>
+
+
+    <!-- CONTROLS -->
+
+    <section class="controls">
+
+        <div class="search">
+
+            <span class="searchIcon">
+                ⌕
+            </span>
+
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="Search lectures, subjects, chapters..."
+            >
+
+        </div>
+
+
+        <select
+            id="subjectFilter"
+            class="filter">
+
+            <option value="all">
+                All Subjects
+            </option>
+
+        </select>
+
+
+        <select
+            id="sortFilter"
+            class="filter">
+
+            <option value="newest">
+                Newest First
+            </option>
+
+            <option value="oldest">
+                Oldest First
+            </option>
+
+            <option value="az">
+                A — Z
+            </option>
+
+        </select>
+
+    </section>
+
+
+    <!-- RESULT BAR -->
+
+    <div class="resultBar">
+
+        <span
+            class="resultCount"
+            id="resultCount">
+            Loading classes...
+        </span>
+
+    </div>
+
+
+    <!-- CLASSES -->
+
+    <section
+        class="classGrid"
+        id="classGrid">
+
+        <div class="empty">
+
+            <div class="emptyIcon">
+                ◷
+            </div>
+
+            <strong>
+                Loading lectures
+            </strong>
+
+            <span>
+                Please wait...
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- MOBILE NAV -->
+
+<nav class="bottomNav">
+
+    <div
+        class="navItem"
+        onclick="location.href='home.html'">
+
+        <div class="navIcon">⌂</div>
+        <span>Home</span>
+
+    </div>
+
+
+    <div class="navItem active">
+
+        <div class="navIcon">▶</div>
+        <span>Classes</span>
+
+    </div>
+
+
+    <div
+        class="navItem"
+        onclick="location.href='live-class.html'">
+
+        <div class="navIcon">●</div>
+        <span>Live</span>
+
+    </div>
+
+
+    <div
+        class="navItem"
+        onclick="showToast('Profile coming soon')">
+
+        <div class="navIcon">○</div>
+        <span>Profile</span>
+
+    </div>
+
+</nav>
+
+
+<!-- VIDEO MODAL -->
+
+<div
+    class="modal"
+    id="videoModal">
+
+    <div class="videoBox">
+
+        <div class="videoHeader">
+
+            <div
+                class="videoTitle"
+                id="videoTitle">
+                Lecture
+            </div>
+
+            <button
+                class="close"
+                id="closeModal">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="player">
+
+            <iframe
+                id="videoFrame"
+                allow="autoplay; fullscreen"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db,
+    onAuthStateChanged,
+    collection,
+    query,
+    orderBy,
+    onSnapshot
+} from "./firebase.js";
+
+
+/* ===============================
+   ELEMENTS
+================================ */
+
+const loading =
+    document.getElementById("loading");
+
+const classGrid =
+    document.getElementById("classGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const subjectFilter =
+    document.getElementById("subjectFilter");
+
+const sortFilter =
+    document.getElementById("sortFilter");
+
+const resultCount =
+    document.getElementById("resultCount");
+
+const videoModal =
+    document.getElementById("videoModal");
+
+const videoFrame =
+    document.getElementById("videoFrame");
+
+const videoTitle =
+    document.getElementById("videoTitle");
+
+const closeModal =
+    document.getElementById("closeModal");
+
+const userName =
+    document.getElementById("userName");
+
+const userPhoto =
+    document.getElementById("userPhoto");
+
+
+/* ===============================
+   STATE
+================================ */
+
+let allClasses = [];
+
+
+/* ===============================
+   AUTH
+================================ */
+
+onAuthStateChanged(auth,(user)=>{
+
+    if(!user){
+
+        location.replace("index.html");
+
+        return;
+    }
+
+
+    userName.textContent =
+        user.displayName ||
+        user.email?.split("@")[0] ||
+        "Student";
+
+
+    if(user.photoURL){
+
+        userPhoto.src =
+            user.photoURL;
+
+    }
+
+
+    loadClasses();
+
+});
+
+
+/* ===============================
+   LOAD FIRESTORE
+================================ */
+
+function loadClasses(){
+
+    const classesQuery =
+        query(
+            collection(db,"recordedClasses"),
+            orderBy("createdAt","desc")
+        );
+
+
+    onSnapshot(
+        classesQuery,
+        (snapshot)=>{
+
+            allClasses = [];
+
+            snapshot.forEach(item=>{
+
+                allClasses.push({
+
+                    id:item.id,
+                    ...item.data()
+
+                });
+
+            });
+
+
+            buildSubjects();
+
+            applyFilters();
+
+
+            loading.style.opacity = "0";
+
+            setTimeout(()=>{
+
+                loading.style.display = "none";
+
+            },400);
+
+        },
+        (error)=>{
+
+            console.error(error);
+
+            classGrid.innerHTML = `
+                <div class="empty">
+
+                    <div class="emptyIcon">
+                        !
+                    </div>
+
+                    <strong>
+                        Unable to load classes
+                    </strong>
+
+                    <span>
+                        Check your Firebase configuration and rules.
+                    </span>
+
+                </div>
+            `;
+
+
+            loading.style.display = "none";
+
+        }
+    );
+
+}
+
+
+/* ===============================
+   BUILD SUBJECT FILTER
+================================ */
+
+function buildSubjects(){
+
+    const subjects =
+        [...new Set(
+            allClasses
+                .map(item =>
+                    item.subject
+                )
+                .filter(Boolean)
+        )]
+        .sort();
+
+
+    subjectFilter.innerHTML = `
+        <option value="all">
+            All Subjects
+        </option>
+    `;
+
+
+    subjects.forEach(subject=>{
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            subject;
+
+        option.textContent =
+            subject;
+
+        subjectFilter.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* ===============================
+   FILTERS
+================================ */
+
+searchInput.addEventListener(
+    "input",
+    applyFilters
+);
+
+subjectFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+sortFilter.addEventListener(
+    "change",
+    applyFilters
+);
+
+
+function applyFilters(){
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+    const subject =
+        subjectFilter.value;
+
+
+    const sort =
+        sortFilter.value;
+
+
+    let filtered =
+        allClasses.filter(item=>{
+
+            const text = [
+
+                item.title,
+                item.subject,
+                item.chapter
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            const searchMatch =
+                !search ||
+                text.includes(search);
+
+
+            const subjectMatch =
+                subject === "all" ||
+                item.subject === subject;
+
+
+            return (
+                searchMatch &&
+                subjectMatch
+            );
+
+        });
+
+
+    if(sort === "az"){
+
+        filtered.sort((a,b)=>
+            String(a.title || "")
+                .localeCompare(
+                    String(b.title || "")
+                )
+        );
+
+    }
+
+
+    if(sort === "oldest"){
+
+        filtered.reverse();
+
+    }
+
+
+    resultCount.textContent =
+        `${filtered.length} ${
+            filtered.length === 1
+            ? "lecture"
+            : "lectures"
+        }`;
+
+
+    renderClasses(filtered);
+
+}
+
+
+/* ===============================
+   RENDER
+================================ */
+
+function renderClasses(classes){
+
+    if(!classes.length){
+
+        classGrid.innerHTML = `
+
+            <div class="empty">
+
+                <div class="emptyIcon">
+                    ⌕
+                </div>
+
+                <strong>
+                    No lectures found
+                </strong>
+
+                <span>
+                    Try another search or subject.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    classGrid.innerHTML =
+        classes.map(item=>{
+
+            const title =
+                escapeHTML(
+                    item.title ||
+                    "Untitled Lecture"
+                );
+
+
+            const subject =
+                escapeHTML(
+                    item.subject ||
+                    "Lecture"
+                );
+
+
+            const chapter =
+                escapeHTML(
+                    item.chapter ||
+                    ""
+                );
+
+
+            const thumbnail =
+                escapeHTML(
+                    item.thumbnail ||
+                    "https://via.placeholder.com/800x450?text=Lecture"
+                );
+
+
+            return `
+
+                <article
+                    class="card"
+                    data-id="${escapeHTML(item.id)}">
+
+                    <div class="thumbnailWrap">
+
+                        <img
+                            class="thumbnail"
+                            src="${thumbnail}"
+                            alt="Lecture"
+                            onerror="
+                                this.src='https://via.placeholder.com/800x450?text=Lecture'
+                            "
+                        >
+
+                        <div class="overlay"></div>
+
+                        <div class="badge">
+                            ${subject}
+                        </div>
+
+                        <div class="playButton">
+                            ▶
+                        </div>
+
+                    </div>
+
+
+                    <div class="cardBody">
+
+                        <h3 class="cardTitle">
+                            ${title}
+                        </h3>
+
+
+                        <div class="meta">
+
+                            <span>
+                                ${subject}
+                            </span>
+
+                            ${
+                                chapter
+                                ?
+                                `<span>•</span>
+                                 <span>${chapter}</span>`
+                                :
+                                ""
+                            }
+
+                        </div>
+
+
+                        <button
+                            class="watchBtn"
+                            data-watch="${escapeHTML(item.id)}">
+
+                            Watch Lecture
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        }).join("");
+
+
+    document
+        .querySelectorAll(".card")
+        .forEach(card=>{
+
+            card.addEventListener(
+                "click",
+                (event)=>{
+
+                    if(
+                        event.target.closest(
+                            ".watchBtn"
+                        )
+                    ){
+                        return;
+                    }
+
+
+                    openClass(
+                        card.dataset.id
+                    );
+
+                }
+            );
+
+        });
+
+
+    document
+        .querySelectorAll("[data-watch]")
+        .forEach(button=>{
+
+            button.addEventListener(
+                "click",
+                ()=>{
+
+                    openClass(
+                        button.dataset.watch
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+/* ===============================
+   OPEN CLASS
+================================ */
+
+function openClass(id){
+
+    const item =
+        allClasses.find(
+            lecture =>
+                lecture.id === id
+        );
+
+
+    if(!item){
+
+        showToast(
+            "Lecture not found."
+        );
+
+        return;
+    }
+
+
+    if(!item.videoUrl){
+
+        showToast(
+            "Video URL is not available."
+        );
+
+        return;
+    }
+
+
+    const videoURL =
+        convertDriveURL(
+            item.videoUrl
+        );
+
+
+    if(!videoURL){
+
+        showToast(
+            "Invalid video URL."
+        );
+
+        return;
+    }
+
+
+    videoTitle.textContent =
+        item.title ||
+        "Lecture";
+
+
+    videoFrame.src =
+        videoURL;
+
+
+    videoModal.classList.add(
+        "show"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* ===============================
+   GOOGLE DRIVE URL
+================================ */
+
+function convertDriveURL(url){
+
+    if(!url){
+        return "";
+    }
+
+
+    url = String(url).trim();
+
+
+    /*
+       Format:
+
+       https://drive.google.com/file/d/FILE_ID/view
+    */
+
+    let match =
+        url.match(
+            /drive\.google\.com\/file\/d\/([^/]+)/
+        );
+
+
+    if(match){
+
+        return `
+            https://drive.google.com/file/d/${match[1]}/preview
+        `.trim();
+
+    }
+
+
+    /*
+       Format:
+
+       https://drive.google.com/open?id=FILE_ID
+    */
+
+    match =
+        url.match(
+            /drive\.google\.com\/open\?id=([^&]+)/
+        );
+
+
+    if(match){
+
+        return `
+            https://drive.google.com/file/d/${match[1]}/preview
+        `.trim();
+
+    }
+
+
+    /*
+       Already preview URL
+    */
+
+    if(
+        url.includes(
+            "drive.google.com/file/"
+        ) &&
+        url.includes("/preview")
+    ){
+
+        return url;
+
+    }
+
+
+    /*
+       Other video URLs
+    */
+
+    return url;
+
+}
+
+
+/* ===============================
+   CLOSE MODAL
+================================ */
+
+function closeVideo(){
+
+    videoFrame.src = "";
+
+    videoModal.classList.remove(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+closeModal.addEventListener(
+    "click",
+    closeVideo
+);
+
+
+videoModal.addEventListener(
+    "click",
+    (event)=>{
+
+        if(event.target === videoModal){
+
+            closeVideo();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    (event)=>{
+
+        if(
+            event.key === "Escape" &&
+            videoModal.classList.contains("show")
+        ){
+
+            closeVideo();
+
+        }
+
+    }
+);
+
+
+/* ===============================
+   TOAST
+================================ */
+
+window.showToast = function(message){
+
+    const toast =
+        document.getElementById("toast");
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(()=>{
+
+        toast.classList.remove(
+            "show"
+        );
+
+    },2500);
+
+};
+
+
+/* ===============================
+   ESCAPE HTML
+================================ */
+
+function escapeHTML(value){
+
+    if(
+        value === undefined ||
+        value === null
+    ){
+        return "";
+    }
+
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
